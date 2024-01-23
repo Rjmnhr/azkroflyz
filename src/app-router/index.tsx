@@ -13,6 +13,14 @@ const AppRoute: React.FC = () => {
             </>
           }
         />
+        {/* <Route
+          path="/output"
+          element={
+            <>
+              <OutputPage />
+            </>
+          }
+        /> */}
       </Routes>
     </BrowserRouter>
   );
