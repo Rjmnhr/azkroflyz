@@ -171,13 +171,18 @@ const InputPage: React.FC = () => {
     setUGTier(value);
     setSelectedUgCollege("");
     // Filter colleges based on the selected tier
-    const filtered = value
-      ? UGCollegeTierList.filter(
-          (college) => college.tier_value === parseInt(value)
-        )
-      : UGCollegeTierList;
 
-    setFilteredColleges(filtered);
+    if (value === "4") {
+      setFilteredColleges([{ institute_value: "Others", tier_value: 4 }]);
+    } else {
+      const filtered = value
+        ? UGCollegeTierList.filter(
+            (college) => college.tier_value === parseInt(value)
+          )
+        : UGCollegeTierList;
+
+      setFilteredColleges(filtered);
+    }
   };
 
   // Function to extract and parse numerical values from the company size range
@@ -292,7 +297,7 @@ const InputPage: React.FC = () => {
                 </Option>
                 {filteredColleges.sort().map((college, index) => (
                   <Option key={index} value={college.institute_value}>
-                    {college.institute_value}
+                    {formatTextValue(college.institute_value)}
                   </Option>
                 ))}
               </Select>
