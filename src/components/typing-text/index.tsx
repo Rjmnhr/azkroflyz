@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-const textArray = ["Start filling the form to see the results"];
+const textArray = ["Start filling the details to see the results"];
 const TypingEffect: React.FC = () => {
   const [textIndex, setTextIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
@@ -52,7 +52,7 @@ const TypingEffect: React.FC = () => {
     <div>
       <h1 style={{ fontWeight: "bold" }}>
         {currentText.toUpperCase()}
-        {showCursor && <span>|</span>}
+        {showCursor && <span className="text-primary" style={{fontWeight:"normal"}}>|</span>}
       </h1>
     </div>
   );
