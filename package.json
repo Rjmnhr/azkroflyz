@@ -23,7 +23,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "install": "npm install --legacy-peer-deps",
+    "preinstall": "export NPM_CONFIG_LEGACY_PEER_DEPS=true",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
