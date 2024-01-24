@@ -33,6 +33,7 @@ const WorldMapComponent = ({ topCities }) => {
   return (
     <div>
       <WorldMapComponentStyled>
+        <India/>
         <SVGMap map={India} />
         <style>
           {highlightedStates
