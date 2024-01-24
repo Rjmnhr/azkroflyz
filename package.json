@@ -16,7 +16,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
-    "react-svg-map": "^2.2.0",
+    "react-svg-map ----legacy-peer-deps": "^2.2.0",
     "recharts": "^2.10.4",
     "styled-components": "^6.1.8",
     "typescript": "^4.9.5",
@@ -26,8 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "init": "npm run $INIT_COMMAND"
+    "eject": "react-scripts eject"
+ 
   },
   "eslintConfig": {
     "extends": [
