@@ -3,8 +3,6 @@ import AxiosInstance from "../../components/axios";
 import { formatTextValue } from "../input-page";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 import { OutputPageStyled } from "./style";
-
-import WorldMapComponent from "../../components/world-map/react-svg";
 import { Divider, Progress, Spin } from "antd";
 interface Profile {
   [key: string]: string | number | null;
@@ -244,6 +242,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
   const [educationOutput, setEducationOutput] = useState([]);
   const [top5TitleData, setTop5TitleData] = useState<TitleCount[]>([]);
   const [top5Cities, setTop5Cities] = useState<LocationCount[]>([]);
+  //eslint-disable-next-line
   const [capitalizedLocations, setCapitalizedLocations] = useState<string[]>(
     []
   );
@@ -607,7 +606,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                 {top5Cities.length > 1 ? (
                   <div className="d-flex align-items-center justify-content-center ">
                     <div className="col-6">
-                      <WorldMapComponent topCities={capitalizedLocations} />
+                      <h3>Map place holder</h3>
                     </div>
                     <div
                       className="col-6"
