@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import India from "@svg-maps/india";
 import { SVGMap } from "react-svg-map";
-// import "react-svg-map/lib/index.css"; // Ensure you import the styles
+import "react-svg-map/lib/index.css"; // Ensure you import the styles
 import { CitiesOfIndia } from "../constants/cities";
 import { StateCodes } from "../constants/states";
 import { WorldMapComponentStyled } from "./style";

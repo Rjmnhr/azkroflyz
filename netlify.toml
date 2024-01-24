@@ -1,0 +1,2 @@
+[build]
+  command = "npm install && npm install --legacy-peer-deps react-svg-map && npm run build"
