@@ -16,14 +16,12 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
-    "react-svg-map": "^2.2.0",
     "recharts": "^2.10.4",
     "styled-components": "^6.1.8",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "preinstall": "export NPM_CONFIG_LEGACY_PEER_DEPS=true",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

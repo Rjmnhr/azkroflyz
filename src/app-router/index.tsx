@@ -1,27 +1,27 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import InputPage from "../pages/input-page";
-
+import LandingPage from "../pages/landing-page";
 
 const AppRoute: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/tool"
           element={
             <>
               <InputPage />
             </>
           }
         />
-        {/* <Route
-          path="/output"
+        <Route
+          path="/"
           element={
             <>
-              <OutputPage />
+              <LandingPage />
             </>
           }
-        /> */}
+        />
       </Routes>
     </BrowserRouter>
   );

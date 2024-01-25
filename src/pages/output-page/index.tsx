@@ -3,6 +3,7 @@ import AxiosInstance from "../../components/axios";
 import { formatTextValue } from "../input-page";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 import { OutputPageStyled } from "./style";
+
 import { Divider, Progress, Spin } from "antd";
 interface Profile {
   [key: string]: string | number | null;
