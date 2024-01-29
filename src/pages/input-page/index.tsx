@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Divider, Select } from "antd";
+import { Divider, Progress, Select } from "antd";
 import AxiosInstance from "../../components/axios";
 import OutputPage from "../output-page";
-import TypingEffect from "../../components/typing-text";
 
 const { Option } = Select;
 
@@ -17,17 +16,17 @@ const UGDegreeOptions = [
   "BSC",
   "Bachelor of Laws",
 ];
-const PGDegreeOptions = [
-  "MBA",
-  "Masters Degree",
-  "PGDBA",
-  "MTECH",
-  "MCOM",
-  "MA",
-  "MCA",
-  "MSC",
-  "Master of Laws",
-];
+// const PGDegreeOptions = [
+//   "MBA",
+//   "Masters Degree",
+//   "PGDBA",
+//   "MTECH",
+//   "MCOM",
+//   "MA",
+//   "MCA",
+//   "MSC",
+//   "Master of Laws",
+// ];
 
 // Function to format college names
 export const formatTextValue = (name: string): string => {
@@ -61,10 +60,11 @@ const collegeTierOptions = ["1", "2", "3", "4"];
 const InputPage: React.FC = () => {
   const [UGDegree, setUGDegree] = useState<string>("");
   const [UGDegreeMatch, setUGDegreeMatch] = useState<number>(0);
-  const [additionalDegree, setAdditionalDegree] = useState<string>("");
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [selectedUgCollege, setSelectedUgCollege] = useState<string>("");
-  const [additionalDegreeMatch, setAdditionalDegreeMatch] = useState<number>(0);
+  const [obtainedTierValue, setObtainedTierValue] = useState<string>("");
   const [UGTier, setUGTier] = useState<string>("");
+  //eslint-disable-next-line
   const [UGTierMatch, setUGTierMatch] = useState<number>(0);
   const [companySize, setCompanySize] = useState<CompanySize[]>([]);
   const [companySectors, setCompanySectors] = useState<CompanySectors[]>([]);
@@ -83,10 +83,12 @@ const InputPage: React.FC = () => {
   >([]);
   const [desiredTitle, setDesiredTitle] = useState<string>("");
   const [desiredTitleMatch, setDesiredTitleMatch] = useState<number>(0);
-
-  const [ugAndAdditionalDegreeMatch, SetUgDegreeAndAdditional] =
+  //eslint-disable-next-line
+  const [ugAndAdditionalDegreeMatch, setUgDegreeAndAdditional] =
     useState<number>(0);
-  const [ugDegreeAndUGTierMatch, SetUgDegreeAndUGTierMatch] =
+  const [ugDegreeAndUGTierMatch, setUgDegreeAndUGTierMatch] =
+    useState<number>(0);
+  const [ugDegreeAndDesiredMatch, setUgDegreeAndDesiredMatch] =
     useState<number>(0);
   const [storedDataString, setStoredDataString] = useState("");
 
@@ -94,7 +96,6 @@ const InputPage: React.FC = () => {
     if (
       desiredTitle ||
       UGDegree ||
-      additionalDegree ||
       UGTier ||
       selectedCompanySector ||
       selectedCompanySize
@@ -105,7 +106,7 @@ const InputPage: React.FC = () => {
   }, [
     desiredTitle,
     UGDegree,
-    additionalDegree,
+
     UGTier,
     selectedCompanySector,
     selectedCompanySize,
@@ -117,7 +118,7 @@ const InputPage: React.FC = () => {
     formData.append("desired_title", desiredTitle);
 
     formData.append("ug_degree", UGDegree);
-    formData.append("additional_degree", additionalDegree);
+
     formData.append("ug_tier", UGTier);
     formData.append("company_size", selectedCompanySize);
     formData.append("company_sector", selectedCompanySector);
@@ -133,12 +134,13 @@ const InputPage: React.FC = () => {
 
         setDesiredTitleMatch(dataObject.row_counts_desired_title);
         setUGDegreeMatch(dataObject.row_counts_ug_degree);
-        setAdditionalDegreeMatch(dataObject.row_counts_additional_degree);
+
         setUGTierMatch(dataObject.row_counts_ug_tier);
         setSelectedCompanySizeMatch(dataObject.row_counts_company_size);
         setSelectedCompanySectorMatch(dataObject.row_counts_company_sector);
-        SetUgDegreeAndAdditional(dataObject.row_counts_ug_and_add_title);
-        SetUgDegreeAndUGTierMatch(dataObject.row_counts_ug_degree_and_ug_tier);
+        setUgDegreeAndAdditional(dataObject.row_counts_ug_and_add_title);
+        setUgDegreeAndUGTierMatch(dataObject.row_counts_ug_degree_and_ug_tier);
+        setUgDegreeAndDesiredMatch(dataObject.row_counts_ug_and_desired_title);
       })
       .catch((err) => console.log(err));
   };
@@ -149,6 +151,16 @@ const InputPage: React.FC = () => {
         const response = await res.data;
 
         setUGCollegeTierList(response);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    AxiosInstance.get("api/linkedin/total-count")
+      .then(async (res) => {
+        const response = await res.data;
+
+        setTotalCount(response[0]["COUNT(*)"]);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -210,6 +222,7 @@ const InputPage: React.FC = () => {
     // Filter colleges based on the selected tier
     if (value === "others") {
       setUGTier("4");
+      setObtainedTierValue("4");
     } else {
       const filtered = value
         ? UGCollegeTierList.filter(
@@ -217,7 +230,8 @@ const InputPage: React.FC = () => {
           )
         : UGCollegeTierList;
 
-      setUGTier(JSON.stringify(filtered[0].tier_value));
+      setUGTier(JSON.stringify(filtered[0]?.tier_value));
+      setObtainedTierValue(JSON.stringify(filtered[0]?.tier_value));
     }
   };
 
@@ -243,7 +257,6 @@ const InputPage: React.FC = () => {
     // Your logic for handling form submission
     const valuesObject = {
       UGDegree: UGDegree,
-      PGDegree: additionalDegree,
       UGTier: UGTier,
       UGCollege: selectedUgCollege,
       DesiredTitle: desiredTitle,
@@ -256,7 +269,13 @@ const InputPage: React.FC = () => {
 
     sessionStorage.setItem("input-data", JSON.stringify(valuesObject));
   };
-
+  const handleEditingSave = () => {
+    setIsTierEditing(false);
+  };
+  const handleEditingReset = () => {
+    setIsTierEditing(false);
+    setUGTier(obtainedTierValue);
+  };
   const handleEditing = () => {
     setIsTierEditing(true);
   };
@@ -294,24 +313,6 @@ const InputPage: React.FC = () => {
             </div>
 
             <div className=" form-group">
-              <label>Post Graduate Degree</label>
-              <Select
-                value={additionalDegree}
-                onChange={(value) => setAdditionalDegree(value)}
-                style={{ width: "100%", height: "40px" }}
-              >
-                <Option value="" disabled>
-                  Select a degree
-                </Option>
-                {PGDegreeOptions.sort().map((degree, index) => (
-                  <Option key={index} value={degree}>
-                    {degree}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-
-            <div className=" form-group">
               <label> Under Graduate College</label>
               <Select
                 disabled={UGDegree ? false : true}
@@ -332,23 +333,36 @@ const InputPage: React.FC = () => {
             </div>
 
             {isTierEditing ? (
-              <div className=" form-group">
-                <label> College Tier</label>
-                <Select
-                  disabled={selectedUgCollege ? false : true}
-                  value={UGTier}
-                  onChange={(value) => setUGTier(value)}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select Tier
-                  </Option>
-                  {collegeTierOptions.sort().map((tier, index) => (
-                    <Option key={index} value={tier}>
-                      {tier}
-                    </Option>
-                  ))}
-                </Select>
+              <div className="d-flex align-items-center justify-content-between form-group">
+                <div>
+                  <label className="mr-3"> College Tier : </label>
+                  <Select
+                    disabled={selectedUgCollege ? false : true}
+                    value={UGTier}
+                    onChange={(value) => setUGTier(value)}
+                    style={{ width: "100px", height: "40px" }}
+                  >
+                    {collegeTierOptions.sort().map((tier, index) => (
+                      <Option key={index} value={tier}>
+                        {tier}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <button
+                    className="btn-sm btn border mr-3"
+                    onClick={handleEditingSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="btn-sm btn border"
+                    onClick={handleEditingReset}
+                  >
+                    Default
+                  </button>
+                </div>
               </div>
             ) : selectedUgCollege ? (
               <div className="d-flex align-items-center justify-content-between my-3">
@@ -418,12 +432,6 @@ const InputPage: React.FC = () => {
                 ))}
               </Select>
             </div>
-            {/* 
-            <Form.Item>
-              <Button type="primary" onClick={handleFormSubmit}>
-                Submit
-              </Button>
-            </Form.Item> */}
           </div>
         </div>
         <div
@@ -448,74 +456,192 @@ const InputPage: React.FC = () => {
                   <div className="container" data-aos="fade-up">
                     <div className="d-flex flex-wrap ">
                       <div className="col-lg-4  col-md-6 mt-5 mt-md-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">{UGDegreeMatch}</span>
-                          <p> UG Degree </p>
-                        </div>
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round((UGDegreeMatch / totalCount) * 100)}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p> UG Degree </p>
                       </div>
-
-                      <div className="col-lg-4  col-md-6  mt-lg-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {additionalDegreeMatch}
-                          </span>
-                          <p> PG Degree </p>
-                        </div>
-                      </div>
-                      <div className="col-lg-4  col-md-6">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">{UGTierMatch}</span>
-                          <p>
-                            <p>UG College Tier</p>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="d-flex flex-wrap mt-3">
-                      <div className="col-lg-4  col-md-6  mt-lg-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {desiredTitleMatch}
-                          </span>
-                          <p> Desired Title </p>
-                        </div>
-                      </div>
-                      <div className="col-lg-4  col-md-6 mt-3 mt-md-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {ugAndAdditionalDegreeMatch}
-                          </span>
-                          <p> UG Degree and PG Degree </p>
-                        </div>
+                      <div className="col-lg-4  col-md-6 mt-5 mt-md-0">
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round((UGTierMatch / totalCount) * 100)}%
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p> UG Tier </p>
                       </div>
 
                       <div className="col-lg-4  col-md-6 mt-5 mt-lg-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {ugDegreeAndUGTierMatch}
-                          </span>
-                          <p> UG Degree and UG Tier </p>
-                        </div>
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round(
+                                  (ugDegreeAndUGTierMatch / UGDegreeMatch) * 100
+                                )}{" "}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p> UG Degree and UG Tier</p>
                       </div>
                     </div>
+
                     <div className="d-flex flex-wrap mt-3 ">
+                      <div className="col-lg-4  col-md-6  mt-lg-0">
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round(
+                                  (ugDegreeAndDesiredMatch / UGDegreeMatch) *
+                                    100
+                                )}{" "}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p> Desired title and UG degree </p>
+                      </div>
                       <div className="col-lg-4  col-md-6 mt-5 mt-md-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {selectedCompanySizeMatch}
-                          </span>
-                          <p> Company Size </p>
-                        </div>
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round(
+                                  (selectedCompanySizeMatch / totalCount) * 100
+                                )}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p> Company size </p>
                       </div>
 
                       <div className="col-lg-4  col-md-6  mt-lg-0">
-                        <div className="count-box">
-                          <span data-toggle="counter-up">
-                            {selectedCompanySectorMatch}
-                          </span>
-                          <p>Company Sector</p>
-                        </div>
+                        <Progress
+                          className="mb-3"
+                          strokeColor="#1aa1b6"
+                          strokeWidth={8}
+                          size={150}
+                          type="circle"
+                          percent={100}
+                          format={() => (
+                            <div
+                              className="text-dark "
+                              style={{ fontSize: "16px" }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "36px",
+                                  display: "block",
+                                  fontWeight: "700",
+                                  color: "#111111",
+                                }}
+                              >
+                                {Math.round(
+                                  (selectedCompanySectorMatch / totalCount) *
+                                    100
+                                )}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        />
+                        <p>Company sector</p> 
                       </div>
                     </div>
                   </div>
@@ -534,7 +660,7 @@ const InputPage: React.FC = () => {
               }}
               className="container w-50"
             >
-              <TypingEffect />
+              <h1>Your results appear here</h1>
             </div>
           )}
         </div>

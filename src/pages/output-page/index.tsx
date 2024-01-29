@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AxiosInstance from "../../components/axios";
 import { formatTextValue } from "../input-page";
-import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
+import { Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { OutputPageStyled } from "./style";
 
+import WorldMapComponent from "../../components/world-map/react-svg";
 import { Divider, Progress, Spin } from "antd";
+
 interface Profile {
   [key: string]: string | number | null;
 }
@@ -13,6 +15,7 @@ interface TitleCount {
   title: string;
   count: number;
 }
+
 interface LocationCount {
   location: string;
   count: number;
@@ -150,10 +153,16 @@ function getTopTitles(profiles: Profile[]): TitleCount[] {
   // Sort titles based on the count in descending order
   sortedTitles.sort((a, b) => b.count - a.count);
 
-  // Select the top 5 titles
-  const top5Titles = sortedTitles.slice(0, 5);
+  // Calculate total number of profiles
+  const totalProfiles = profiles.length;
 
-  return top5Titles;
+  // Calculate percentage values for each title count
+  const top5TitlesWithPercentage = sortedTitles.slice(0, 5).map((title) => ({
+    ...title,
+    percentage: Math.round((title.count / totalProfiles) * 100),
+  }));
+
+  return top5TitlesWithPercentage;
 }
 
 function getTopJobLocations(profiles: Profile[]): LocationCount[] {
@@ -215,25 +224,32 @@ function getTopSkills(profiles: Profile[]): SkillCount[] {
 
   // Convert skillCounts into an array of objects for sorting
   const sortedSkills: SkillCount[] = Object.keys(skillCounts).map((skill) => ({
-    skill,
+    skill: formatTextValue(skill),
     count: skillCounts[skill],
   }));
 
   // Sort skills based on the count in descending order
   sortedSkills.sort((a, b) => b.count - a.count);
 
-  // Select the top 5 skills
-  const top5Skills = sortedSkills.slice(0, 5);
+  // Calculate total number of profiles
+  const totalProfiles = profiles.length;
 
-  return top5Skills;
+  // Calculate percentage values for each skill count
+  const top5SkillsWithPercentage = sortedSkills.slice(0, 5).map((skill) => ({
+    ...skill,
+    percentage: Math.round((skill.count / totalProfiles) * 100),
+  }));
+
+  return top5SkillsWithPercentage;
 }
+
 interface OutputPageProps {
   storedDataString: string; // Define the type for storedDataString
 }
-function getColor(index: number): string {
-  const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
-  return colors[index % colors.length];
-}
+// function getColor(index: number): string {
+//   const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
+//   return colors[index % colors.length];
+// }
 const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
   //   const storedDataString = sessionStorage.getItem("input-data");
   //eslint-disable-next-line
@@ -243,7 +259,6 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
   const [educationOutput, setEducationOutput] = useState([]);
   const [top5TitleData, setTop5TitleData] = useState<TitleCount[]>([]);
   const [top5Cities, setTop5Cities] = useState<LocationCount[]>([]);
-  //eslint-disable-next-line
   const [capitalizedLocations, setCapitalizedLocations] = useState<string[]>(
     []
   );
@@ -268,8 +283,6 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
     formData.append("ug_tier", storedData?.UGTier);
 
     if (educationOutput?.length > 0) {
-      console.log("enter");
-
       AxiosInstance.post("api/linkedin/education-desired-output", formData, {
         headers: {
           "Content-Type": "application/json",
@@ -282,7 +295,6 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
 
           const percentageWithTitle =
             (response[0]?.totalCount / response[0]?.titleCount) * 100 || 0;
-          console.log("🚀 ~ .then ~ percentageWithTitle:", percentageWithTitle);
 
           const percentageWithEducation =
             (response?.length / educationOutput.length) * 100 || 0;
@@ -334,7 +346,6 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
 
     formData.append("ug_degree", storedData?.UGDegree);
     formData.append("ug_tier", storedData?.UGTier);
-    console.log("enter-1");
 
     AxiosInstance.post("api/linkedin/education-output", formData, {
       headers: {
@@ -346,6 +357,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
 
         setEducationOutput(response);
         const topTitles = getTopTitles(response);
+
         setTop5TitleData(topTitles);
       })
 
@@ -361,7 +373,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
             id="counts"
             className="counts p-3  m-0"
           >
-            <h4 className="mt-3 mb-5">Metrics</h4>
+            <h4 className="mt-3 mb-5">Career Profile Matchings</h4>
 
             {percentageWithTitle || storedData?.DesiredTitle ? (
               <div className="container">
@@ -482,7 +494,8 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
 
           <section style={{ minHeight: "200px" }} className="p-3 m-0">
             <h4 className="my-3">
-              Top skills you need to become the desired title
+              Top skills you need to become the desired title based on your
+              background
             </h4>
 
             {isLoading ? (
@@ -500,28 +513,48 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                 style={{ display: "grid", placeItems: "center" }}
               >
                 {top5Skills.length > 1 ? (
-                  <PieChart width={400} height={280}>
-                    <Pie
-                      data={top5Skills}
-                      cx={200}
-                      cy={100}
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="count"
-                    >
-                      {top5Skills.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={getColor(index)}
-                          name={formatTextValue(entry.skill)}
-                        />
-                      ))}
-                    </Pie>
+                  <BarChart
+                    margin={{ left: 50 }}
+                    width={600}
+                    height={300}
+                    data={top5Skills}
+                    layout="vertical"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis
+                      dataKey="skill"
+                      type="category"
+                      tickFormatter={(value) => value}
+                      allowDataOverflow={true}
+                      orientation="left" // Set the orientation to left
+                    />
                     <Tooltip />
-                    <Legend />
-                  </PieChart>
+
+                    <Bar dataKey="percentage" fill="#1a6cb6" />
+                  </BarChart>
                 ) : (
+                  // <PieChart width={400} height={280}>
+                  //   <Pie
+                  //     data={top5Skills}
+                  //     cx={200}
+                  //     cy={100}
+                  //     labelLine={false}
+                  //     outerRadius={80}
+                  //     fill="#8884d8"
+                  //     dataKey="count"
+                  //   >
+                  //     {top5Skills.map((entry, index) => (
+                  //       <Cell
+                  //         key={`cell-${index}`}
+                  //         fill={getColor(index)}
+                  //         name={formatTextValue(entry.skill)}
+                  //       />
+                  //     ))}
+                  //   </Pie>
+                  //   <Tooltip />
+                  //   <Legend />
+                  // </PieChart>
                   <div
                     style={{
                       height: "100px",
@@ -539,7 +572,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
           <Divider />
           <section style={{ minHeight: "200px" }} className=" p-3  m-0">
             <h4 className="my-3">
-              Top Titles Of Professionals From Your Education Background{" "}
+              Top titles for professionals based on your educational background{" "}
             </h4>
             {isLoading ? (
               <Spin
@@ -551,23 +584,39 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                 <div className="content" />
               </Spin>
             ) : (
-              <div>
+              <div style={{ display: "grid", placeItems: "center" }}>
                 {top5TitleData.length > 1 ? (
-                  <div className="inverted-pyramid">
-                    {top5TitleData.map((item: TitleCount, index) => (
-                      <div
-                        style={{ display: "grid", placeItems: "center" }}
-                        className={`block p-2   block-${index + 1}`}
-                        key={item.title}
-                      >
-                        <p
-                          className="m-0"
-                          style={{ color: "white", fontWeight: "bold" }}
-                        >
-                          {formatTextValue(item.title)}
-                        </p>
-                      </div>
-                    ))}
+                  // <div className="inverted-pyramid">
+                  //   {top5TitleData.map((item: TitleCount, index) => (
+                  //     <div
+                  //       style={{ display: "grid", placeItems: "center" }}
+                  //       className={`block p-2   block-${index + 1}`}
+                  //       key={item.title}
+                  //     >
+                  //       <p
+                  //         className="m-0"
+                  //         style={{ color: "white", fontWeight: "bold" }}
+                  //       >
+                  //         {formatTextValue(item.title)}
+                  //       </p>
+                  //     </div>
+                  //   ))}
+                  // </div>
+                  <div>
+                    <BarChart
+                      margin={{ left: 50 }}
+                      width={600}
+                      height={300}
+                      data={top5TitleData}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="title" type="category" />
+                      <Tooltip />
+
+                      <Bar dataKey="percentage" fill="#1a6cb6" />
+                    </BarChart>
                   </div>
                 ) : (
                   <div
@@ -607,7 +656,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                 {top5Cities.length > 1 ? (
                   <div className="d-flex align-items-center justify-content-center ">
                     <div className="col-6">
-                      <h3>Map place holder</h3>
+                      <WorldMapComponent topCities={capitalizedLocations} />
                     </div>
                     <div
                       className="col-6"
