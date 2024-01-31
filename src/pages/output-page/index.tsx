@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AxiosInstance from "../../components/axios";
 import { formatTextValue } from "../input-page";
-import { Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { Tooltip, BarChart, Bar, XAxis, YAxis } from "recharts";
 import { OutputPageStyled } from "./style";
 
 import WorldMapComponent from "../../components/world-map/react-svg";
 import { Divider, Progress, Spin } from "antd";
+import HeatmapChart from "../../components/heat-map";
+import LineChartComponent from "../../components/line-chart";
 
 interface Profile {
   [key: string]: string | number | null;
@@ -513,26 +515,20 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                 style={{ display: "grid", placeItems: "center" }}
               >
                 {top5Skills.length > 1 ? (
-                  <BarChart
-                    margin={{ left: 50 }}
-                    width={600}
-                    height={300}
-                    data={top5Skills}
-                    layout="vertical"
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis
-                      dataKey="skill"
-                      type="category"
-                      tickFormatter={(value) => value}
-                      allowDataOverflow={true}
-                      orientation="left" // Set the orientation to left
-                    />
-                    <Tooltip />
-
-                    <Bar dataKey="percentage" fill="#1a6cb6" />
-                  </BarChart>
+                  <div>
+                    {top5Skills.map((skillItem, index) => (
+                      <div key={index} style={{ marginBottom: 16 }}>
+                        <span style={{ marginRight: 8 }}>
+                          {skillItem.skill}
+                        </span>
+                        <Progress
+                          percent={skillItem.count}
+                          showInfo={false} // Set to true if you want to display percentage value
+                          strokeColor="#1a6cb6" // Customize the color as needed
+                        />
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   // <PieChart width={400} height={280}>
                   //   <Pie
@@ -562,7 +558,6 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                       placeItems: "center",
                     }}
                   >
-                    {" "}
                     <p>No data found</p>
                   </div>
                 )}
@@ -586,22 +581,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
             ) : (
               <div style={{ display: "grid", placeItems: "center" }}>
                 {top5TitleData.length > 1 ? (
-                  // <div className="inverted-pyramid">
-                  //   {top5TitleData.map((item: TitleCount, index) => (
-                  //     <div
-                  //       style={{ display: "grid", placeItems: "center" }}
-                  //       className={`block p-2   block-${index + 1}`}
-                  //       key={item.title}
-                  //     >
-                  //       <p
-                  //         className="m-0"
-                  //         style={{ color: "white", fontWeight: "bold" }}
-                  //       >
-                  //         {formatTextValue(item.title)}
-                  //       </p>
-                  //     </div>
-                  //   ))}
-                  // </div>
+
                   <div>
                     <BarChart
                       margin={{ left: 50 }}
@@ -610,9 +590,13 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
                       data={top5TitleData}
                       layout="vertical"
                     >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" />
-                      <YAxis dataKey="title" type="category" />
+                      <XAxis type="number" axisLine={false} tick={false} />
+                      <YAxis
+                        dataKey="title"
+                        type="category"
+                        axisLine={false}
+                        tickMargin={20}
+                      />
                       <Tooltip />
 
                       <Bar dataKey="percentage" fill="#1a6cb6" />
@@ -736,6 +720,37 @@ const OutputPage: React.FC<OutputPageProps> = ({ storedDataString }) => {
               </div>
             )}
           </section>
+          <section style={{ minHeight: "200px" }} className=" p-3  mb-5">
+            <h4 className="my-3">Sector vs Employee Counts Heatmap</h4>
+            {isLoading ? (
+              <Spin
+                style={{ height: "100px" }}
+                tip="Loading"
+                className="mt-3"
+                size="large"
+              >
+                <div className="content" />
+              </Spin>
+            ) : (
+              <div>
+                {educationOutput.length > 0 ? (
+                  <HeatmapChart data={educationOutput} />
+                ) : (
+                  <div
+                    style={{
+                      height: "100px",
+                      display: "grid",
+                      placeItems: "center",
+                    }}
+                  >
+                    {" "}
+                    <p>No data found</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+          <LineChartComponent data={educationOutput} />
         </div>
       </OutputPageStyled>
     </div>

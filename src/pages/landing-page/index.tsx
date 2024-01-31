@@ -12,7 +12,7 @@ const LandingPage: React.FC = () => {
   return (
     <div>
       <LandingPageStyled>
-        <div className="overflow-hidden content-space-t-lg-1">
+        <div className="overflow-hidden content-space-t-lg-1" style={{background:"white",height:"100vh"}}>
           <div className="container position-relative  content-space-b-2">
             <div>
               <img
@@ -27,7 +27,7 @@ const LandingPage: React.FC = () => {
 
             <div className="w-lg-75 mx-lg-auto">
               <div className="text-center mb-5">
-                <h1 style={{fontWeight:"bold"}} className="display-4">
+                <h1 style={{ fontWeight: "bold" }} className="display-4">
                   <strong>Are you a college student? </strong>
                 </h1>
                 <h2 className="text-primary fs-2 mb-3">

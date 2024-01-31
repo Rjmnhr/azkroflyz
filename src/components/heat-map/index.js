@@ -1,59 +1,75 @@
 import React from "react";
-import HeatmapGrid from "react-heatmap-grid";
+import Plot from "react-plotly.js";
 
 const HeatmapChart = ({ data }) => {
-  // Prepare data for the heatmap
-  const heatmapData = data.map((profile) => {
-    const industries = [];
-    const empCounts = [];
+  // Extracting industry and employee count columns
+  const industries = [];
+  const empCounts = [];
 
+  data.forEach((entry) => {
     for (let i = 1; i <= 7; i++) {
       const industryKey = `mapped_company_${i}_industry`;
       const empCountKey = `mapped_company_${i}_emp_count`;
 
-      const industry = profile[industryKey];
-      const empCount = profile[empCountKey];
+      const industry = entry[industryKey];
+      const empCount = entry[empCountKey];
 
       if (industry && empCount) {
         industries.push(industry);
         empCounts.push(empCount);
       }
     }
-
-    return { industries, empCounts };
   });
 
-  // Extract unique values for x-axis (sectors) and y-axis (employee counts)
-  const uniqueXValues = [
-    ...new Set(heatmapData.flatMap((item) => item.industries)),
-  ];
-  const uniqueYValues = [
-    ...new Set(heatmapData.flatMap((item) => item.empCounts)),
-  ];
+  // Creating unique lists for industries and employee counts
+  const uniqueIndustries = Array.from(new Set(industries));
+  const uniqueEmpCounts = Array.from(new Set(empCounts));
 
-  // Create the heatmap data array
-  const heatmapValues = heatmapData.flatMap((item) =>
-    item.industries.map((industry, index) => ({
-      x: uniqueXValues.indexOf(industry),
-      y: uniqueYValues.indexOf(item.empCounts[index]),
-      value: 1, // You can customize this value based on your requirements
-    }))
-  );
-  console.log("🚀 ~ HeatmapChart ~ heatmapValues:", heatmapValues)
+  // Creating an empty 2D array to store counts for each combination
+  const heatmapData = Array(uniqueEmpCounts.length)
+    .fill()
+    .map(() => Array(uniqueIndustries.length).fill(0));
+
+  // Populating the counts in the 2D array
+  data.forEach((entry) => {
+    for (let i = 1; i <= 7; i++) {
+      const industryKey = `mapped_company_${i}_industry`;
+      const empCountKey = `mapped_company_${i}_emp_count`;
+
+      const industry = entry[industryKey];
+      const empCount = entry[empCountKey];
+
+      if (industry && empCount) {
+        const rowIndex = uniqueEmpCounts.indexOf(empCount);
+        const colIndex = uniqueIndustries.indexOf(industry);
+
+        heatmapData[rowIndex][colIndex]++;
+      }
+    }
+  });
+
+  // Creating the heatmap trace
+  const heatmapTrace = {
+    x: uniqueIndustries,
+    y: uniqueEmpCounts,
+    z: heatmapData,
+    type: "heatmap",
+    colorscale: "Viridis",
+  };
+
+  // Creating the layout
+  const layout = {
+    autosize: true,
+    margin: {
+      b: 100,
+    },
+  };
 
   return (
-    <HeatmapGrid
-      xLabels={uniqueXValues}
-      yLabels={uniqueYValues}
-      data={heatmapValues}
-      height={400}
-      xLabelWidth={60}
-      cellRender={(x, y, value) => value}
-      cellStyle={(background, value, min, max, data, x, y) => ({
-        background: `rgb(66, 99, 217, ${1 - (max - value) / (max - min)})`,
-        fontSize: "11px",
-        color: "#000",
-      })}
+    <Plot
+      data={[heatmapTrace]}
+      layout={layout}
+      config={{ displayModeBar: false }}
     />
   );
 };
