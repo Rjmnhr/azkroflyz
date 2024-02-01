@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Skeleton } from "antd";
+import { Select } from "antd";
 import AxiosInstance from "../../components/axios";
 
 import { useApplicationContext } from "../../context/app-context";
@@ -16,6 +16,19 @@ const UGDegreeOptions = [
   "BCA",
   "BSC",
   "Bachelor of Laws",
+];
+
+const customJobOptions = [
+  { title: "Account Manager" },
+  { title: "Business Analyst" },
+  { title: "Consultant" },
+  { title: "Software Developer" },
+  { title: "Project Manager" },
+  { title: "Product Manager" },
+  { title: "Head of HR" },
+  { title: "President" },
+  { title: "CFO" },
+  { title: "Founder and CEO" },
 ];
 // const PGDegreeOptions = [
 //   "MBA",
@@ -69,16 +82,19 @@ const InputPage: React.FC = () => {
 
   const [companySize, setCompanySize] = useState<CompanySize[]>([]);
   const [companySectors, setCompanySectors] = useState<CompanySectors[]>([]);
+  //eslint-disable-next-line
   const [jobTitleOptions, setJobTitleOptions] = useState<JobTitleOptions[]>([]);
   const [selectedCompanySize, setSelectedCompanySize] = useState<string>("");
-
+  //eslint-disable-next-line
+  const [isCollegeListLoaded, setIsCollegeListLoaded] =
+    useState<boolean>(false);
   const [isTierEditing, setIsTierEditing] = useState<boolean>(false);
   const [collegeOptions, setCollegeOptions] = useState<UGCollegeTierList[]>([]);
   const [filteredColleges, setFilteredColleges] = useState<string[]>([]);
   const [UGCollegeTierList, setUGCollegeTierList] = useState<
     UGCollegeTierList[]
   >([]);
-  const [desiredTitle, setDesiredTitle] = useState<string>("");
+
   const [desiredTitleMatch, setDesiredTitleMatch] = useState<number>(0);
   //eslint-disable-next-line
   const [ugAndAdditionalDegreeMatch, setUgDegreeAndAdditional] =
@@ -95,6 +111,8 @@ const InputPage: React.FC = () => {
     setUGTierMatch,
     setUgDegreeAndUGTierMatch,
     setUgDegreeAndDesiredMatch,
+    setDesiredTitle,
+    desiredTitle,
   } = useApplicationContext();
   useEffect(() => {
     if (
@@ -166,11 +184,10 @@ const InputPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    AxiosInstance.post("api/linkedin/ug-colleges", {
-      ug_degree: UGDegree,
-    })
+    AxiosInstance.get("api/linkedin/ug-colleges")
       .then(async (res) => {
         const response = await res.data;
+        setIsCollegeListLoaded(true);
         const filtered = response.filter(
           (item: UGCollegeTierList) => item.institute_value !== null
         );
@@ -211,6 +228,11 @@ const InputPage: React.FC = () => {
         const filteredResponse = response.filter(
           (company: JobTitleOptions) => company.title !== null
         );
+        console.log(
+          "🚀 ~ .then ~ filteredResponse:",
+          JSON.stringify(filteredResponse)
+        );
+
         setJobTitleOptions(filteredResponse);
       })
       .catch((err) => console.log(err));
@@ -302,178 +324,155 @@ const InputPage: React.FC = () => {
             alignContent: "start",
           }}
         >
-          {collegeOptions.length > 1 &&
-          companySectors.length > 1 &&
-          companySize.length > 1 &&
-          jobTitleOptions.length > 1 ? (
-            <div className="text-start  col-10  mt-3 p-3">
-              <div className=" form-group mb-3">
-                <label className="mb-3">Under Graduate Degree</label>
-                <Select
-                  className="rounded-0"
-                  value={UGDegree}
-                  onChange={(value) => setUGDegree(value)}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select UG degree
+          <div className="text-start  col-10  mt-3 p-3">
+            <div className=" form-group mb-3">
+              <label className="mb-3">Under Graduate Degree</label>
+              <Select
+                className="rounded-0"
+                value={UGDegree}
+                onChange={(value) => setUGDegree(value)}
+                style={{ width: "100%", height: "40px" }}
+              >
+                <Option value="" disabled>
+                  Select UG degree
+                </Option>
+                {UGDegreeOptions.sort().map((degree, index) => (
+                  <Option key={index} value={degree}>
+                    {degree}
                   </Option>
-                  {UGDegreeOptions.sort().map((degree, index) => (
-                    <Option key={index} value={degree}>
-                      {degree}
-                    </Option>
-                  ))}
-                </Select>
-              </div>
+                ))}
+              </Select>
+            </div>
 
-              <div className=" form-group mb-3">
-                <label className="mb-3"> Under Graduate College</label>
-                <Select
-                  disabled={UGDegree ? false : true}
-                  value={selectedUgCollege}
-                  onChange={handleCollegeChange}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select UG College
+            <div className=" form-group mb-3">
+              <label className="mb-3"> Under Graduate College</label>
+              <Select
+                disabled={UGDegree ? false : true}
+                value={selectedUgCollege}
+                onChange={handleCollegeChange}
+                style={{ width: "100%", height: "40px" }}
+              >
+                <Option value="" disabled>
+                  Select UG College
+                </Option>
+                {filteredColleges.sort().map((college, index) => (
+                  <Option key={index} value={college}>
+                    {formatTextValue(college)}
                   </Option>
-                  {filteredColleges.sort().map((college, index) => (
-                    <Option key={index} value={college}>
-                      {formatTextValue(college)}
-                    </Option>
-                  ))}
-                  <Option value="others">Others</Option>
-                </Select>
-              </div>
+                ))}
+                <Option value="others">Others</Option>
+              </Select>
+            </div>
 
-              {isTierEditing ? (
-                <div className=" align-items-center justify-content-between form-group mb-3">
-                  <div>
-                    <label style={{ marginRight: "8px" }} className=" mb-3">
-                      {" "}
-                      College Tier :{" "}
-                    </label>
-                    <Select
-                      disabled={selectedUgCollege ? false : true}
-                      value={UGTier}
-                      onChange={(value) => setUGTier(value)}
-                      style={{ width: "100px" }}
-                    >
-                      {collegeTierOptions.sort().map((tier, index) => (
-                        <Option key={index} value={tier}>
-                          {tier}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div>
-                    <button
-                      className="btn-sm btn btn-primary border "
-                      style={{ marginRight: "8px" }}
-                      onClick={handleEditingSave}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="btn-sm btn border"
-                      onClick={handleEditingReset}
-                    >
-                      Default
-                    </button>
-                  </div>
-                </div>
-              ) : selectedUgCollege ? (
-                <div className="d-flex align-items-center justify-content-between my-3">
-                  <label className="mr-3 mb-3 pt-3">
-                    College Tier :
-                    <span
-                      className="text-primary"
-                      style={{ fontWeight: "bold" }}
-                    >
-                      {" "}
-                      {UGTier}
-                    </span>
+            {isTierEditing ? (
+              <div className=" align-items-center justify-content-between form-group mb-3">
+                <div>
+                  <label style={{ marginRight: "8px" }} className=" mb-3">
+                    {" "}
+                    College Tier :{" "}
                   </label>
-                  <button className="btn-sm btn border" onClick={handleEditing}>
-                    Change
+                  <Select
+                    disabled={selectedUgCollege ? false : true}
+                    value={UGTier}
+                    onChange={(value) => setUGTier(value)}
+                    style={{ width: "100px" }}
+                  >
+                    {collegeTierOptions.sort().map((tier, index) => (
+                      <Option key={index} value={tier}>
+                        {tier}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <button
+                    className="btn-sm btn btn-primary border "
+                    style={{ marginRight: "8px" }}
+                    onClick={handleEditingSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="btn-sm btn border"
+                    onClick={handleEditingReset}
+                  >
+                    Default
                   </button>
                 </div>
-              ) : (
-                ""
-              )}
-
-              <div className=" form-group mb-3">
-                <label className="mb-3"> Desired Title </label>
-                <Select
-                  value={desiredTitle}
-                  onChange={(value) => setDesiredTitle(value)}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select Desired title
-                  </Option>
-                  {jobTitleOptions
-                    .slice() // Create a shallow copy to avoid mutating the original array
-                    .sort((a, b) => a.title.localeCompare(b.title))
-                    .map((title, index) => (
-                      <Option key={index} value={title.title}>
-                        {formatTextValue(title.title)}
-                      </Option>
-                    ))}
-                </Select>
               </div>
-              <div className=" form-group mb-3">
-                <label className="mb-3">
-                  {" "}
-                  How big of a company do you want?{" "}
+            ) : selectedUgCollege ? (
+              <div className="d-flex align-items-center justify-content-between my-3">
+                <label className="mr-3 mb-3 pt-3">
+                  College Tier :
+                  <span className="text-primary" style={{ fontWeight: "bold" }}>
+                    {" "}
+                    {UGTier}
+                  </span>
                 </label>
-                <Select
-                  value={selectedCompanySize}
-                  onChange={(value) => setSelectedCompanySize(value)}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select employee count
+                <button className="btn-sm btn border" onClick={handleEditing}>
+                  Change
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
+
+            <div className=" form-group mb-3">
+              <label className="mb-3"> Desired Title </label>
+              <Select
+                value={desiredTitle}
+                onChange={(value) => setDesiredTitle(value)}
+                style={{ width: "100%", height: "40px" }}
+              >
+                <Option value="" disabled>
+                  Select Desired title
+                </Option>
+                {customJobOptions.map((title, index) => (
+                  <Option key={index} value={title.title}>
+                    {formatTextValue(title.title)}
                   </Option>
-                  {sortedCompanySizes.sort().map((company, index) => (
-                    <Option key={index} value={company.company_size}>
-                      {company.company_size}
+                ))}
+              </Select>
+            </div>
+            <div className=" form-group mb-3">
+              <label className="mb-3"> Your desired company size</label>
+              <Select
+                value={selectedCompanySize}
+                onChange={(value) => setSelectedCompanySize(value)}
+                style={{ width: "100%", height: "40px" }}
+              >
+                <Option value="" disabled>
+                  Select employee count
+                </Option>
+                {sortedCompanySizes.sort().map((company, index) => (
+                  <Option key={index} value={company.company_size}>
+                    {company.company_size}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+            <div className=" form-group mb-3">
+              <label className="mb-3"> Your desired company sector</label>
+              <Select
+                value={selectedCompanySector}
+                onChange={(value) => setSelectedCompanySector(value)}
+                style={{ width: "100%", height: "40px" }}
+              >
+                <Option value="" disabled>
+                  Select sector
+                </Option>
+                {companySectors
+                  .sort((a, b) =>
+                    a.company_sector.localeCompare(b.company_sector)
+                  )
+                  .map((company, index) => (
+                    <Option key={index} value={company.company_sector}>
+                      {formatTextValue(company.company_sector)}
                     </Option>
                   ))}
-                </Select>
-              </div>
-              <div className=" form-group mb-3">
-                <label className="mb-3">
-                  {" "}
-                  Which sector do you want to work in?{" "}
-                </label>
-                <Select
-                  value={selectedCompanySector}
-                  onChange={(value) => setSelectedCompanySector(value)}
-                  style={{ width: "100%", height: "40px" }}
-                >
-                  <Option value="" disabled>
-                    Select sector
-                  </Option>
-                  {companySectors
-                    .sort((a, b) =>
-                      a.company_sector.localeCompare(b.company_sector)
-                    )
-                    .map((company, index) => (
-                      <Option key={index} value={company.company_sector}>
-                        {formatTextValue(company.company_sector)}
-                      </Option>
-                    ))}
-                </Select>
-              </div>
+              </Select>
             </div>
-          ) : (
-            <div className="text-start  col-10  mt-3 p-3">
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

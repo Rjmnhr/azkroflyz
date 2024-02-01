@@ -24,6 +24,8 @@ interface AppContextProps {
   setUgDegreeAndUGTierMatch: Dispatch<SetStateAction<number>>;
   ugDegreeAndDesiredMatch: number;
   setUgDegreeAndDesiredMatch: Dispatch<SetStateAction<number>>;
+  desiredTitle: string;
+  setDesiredTitle: Dispatch<SetStateAction<string>>;
 }
 
 const MyContext = createContext<AppContextProps | undefined>(undefined);
@@ -47,6 +49,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     useState<number>(0);
   const [ugDegreeAndDesiredMatch, setUgDegreeAndDesiredMatch] =
     useState<number>(0);
+  const [desiredTitle, setDesiredTitle] = useState<string>("");
 
   const value: AppContextProps = {
     storedDataString,
@@ -65,6 +68,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     setUgDegreeAndUGTierMatch,
     ugDegreeAndDesiredMatch,
     setUgDegreeAndDesiredMatch,
+    desiredTitle,
+    setDesiredTitle,
   };
 
   return <MyContext.Provider value={value}>{children}</MyContext.Provider>;

@@ -9,6 +9,9 @@ import HeatmapChart from "../../components/heat-map";
 import WorldMapComponent from "../../components/world-map/react-svg";
 import ApexChart from "../../components/apex-charts";
 import ApexPieChart from "../../components/apex-pie-chart";
+import HeatmapChartDegreeVsTitle from "../../components/heat-map/degree-vs-title";
+
+
 interface Profile {
   [key: string]: string | number | null;
 }
@@ -263,6 +266,7 @@ const TemplateComponent: React.FC = () => {
   //eslint-disable-next-line
   const [percentageWithEducation, setPercentageWithEducation] =
     useState<number>(0);
+  //eslint-disable-next-line
   const [uniqueCompanies, setUniqueCompanies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { storedDataString } = useApplicationContext();
@@ -276,6 +280,7 @@ const TemplateComponent: React.FC = () => {
     UGTierMatch,
     ugDegreeAndDesiredMatch,
     ugDegreeAndUGTierMatch,
+    desiredTitle,
   } = useApplicationContext();
   useEffect(() => {
     const storedData = storedDataString ? JSON.parse(storedDataString) : null;
@@ -356,6 +361,7 @@ const TemplateComponent: React.FC = () => {
     })
       .then(async (res) => {
         const response = await res.data;
+        console.log("🚀 ~ .then ~ response:", JSON.stringify(response));
 
         setEducationOutput(response);
         const topTitles = getTopTitles(response);
@@ -560,58 +566,31 @@ const TemplateComponent: React.FC = () => {
                     </div>
                   </div>
                   <div className="col-lg-4 col-md-4 order-1">
-                    <div className="row">
-                      <div className="col-lg-6 col-md-12 col-6 mb-4">
-                        <div className="card">
-                          <div className="card-body">
-                            <div className="card-title d-flex align-items-start justify-content-between">
-                              <div className="avatar flex-shrink-0">
-                                <img
-                                  src="../assets/img/icons/unicons/chart-success.png"
-                                  alt="chart success"
-                                  className="rounded"
-                                />
-                              </div>
+                    <div className="col-12 mb-4">
+                      <div className="card">
+                        <div className="card-body">
+                          <div className="card-title d-flex align-items-start justify-content-between">
+                            <div className="avatar flex-shrink-0">
+                              <img
+                                src="../assets/img/icons/unicons/paypal.png"
+                                alt="Credit Card"
+                                className="rounded"
+                              />
                             </div>
-                            <span className="fw-semibold d-block mb-1">
-                              Company size
-                            </span>
-                            <h3 className="card-title mb-2">
-                              {Math.round(
-                                (selectedCompanySizeMatch / totalCount) * 100
-                              )}
-                              %
-                            </h3>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +72.80%
-                            </small>
                           </div>
-                        </div>
-                      </div>
+                          <span className="fw-semibold d-block mb-1">
+                            Percentage of UG tier profiles in selected UG Degree
+                          </span>
+                          <h3 className="card-title text-nowrap mb-2">
+                            {Math.round(
+                              (ugDegreeAndUGTierMatch / UGDegreeMatch) * 100
+                            )}{" "}
+                            %
+                          </h3>
 
-                      <div className="col-lg-6 col-md-12 col-6 mb-4">
-                        <div className="card">
-                          <div className="card-body">
-                            <div className="card-title d-flex align-items-start justify-content-between">
-                              <div className="avatar flex-shrink-0">
-                                <img
-                                  src="../assets/img/icons/unicons/wallet-info.png"
-                                  alt="Credit Card"
-                                  className="rounded"
-                                />
-                              </div>
-                            </div>
-                            <span>Sector match</span>
-                            <h3 className="card-title text-nowrap mb-1">
-                              {Math.round(
-                                (selectedCompanySectorMatch / totalCount) * 100
-                              )}
-                              %
-                            </h3>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +28.42%
-                            </small>
-                          </div>
+                          <small className="text-danger fw-semibold">
+                            <i className="bx bx-down-arrow-alt"></i> -14.82%
+                          </small>
                         </div>
                       </div>
                     </div>
@@ -667,7 +646,7 @@ const TemplateComponent: React.FC = () => {
                             )}
                             <Divider />
                             <h5 className="card-header m-0 me-2 pb-3">
-                              Top Titles
+                              Popular Titles
                             </h5>
                             {isLoading ? (
                               //
@@ -687,8 +666,7 @@ const TemplateComponent: React.FC = () => {
                                     <ApexChart top5TitleData={top5TitleData} />
                                     <p className="container">
                                       {" "}
-                                      Top titles for professionals based on your
-                                      educational background{" "}
+                                      Most popular titles for your profile
                                     </p>
                                   </div>
                                 ) : (
@@ -737,8 +715,8 @@ const TemplateComponent: React.FC = () => {
                             />
                             <p style={{ fontSize: "14px" }}>
                               {" "}
-                              Percentage of profiles from your background made
-                              it to
+                              Percentage of profiles similar to you became the{" "}
+                              {desiredTitle}
                               <br />
                               <span className="text-primary">
                                 {formatTextValue(storedData?.DesiredTitle)}
@@ -769,7 +747,11 @@ const TemplateComponent: React.FC = () => {
                                 </div>
                               )}
                             />
-                            <p> Average job changes</p>
+                            <p>
+                              {" "}
+                              Average job change required for someone with your
+                              profile to become {desiredTitle}
+                            </p>
                             <Progress
                               className="mb-3"
                               strokeColor="#696cff"
@@ -797,63 +779,9 @@ const TemplateComponent: React.FC = () => {
                             />
                             <p style={{ fontSize: "14px" }}>
                               {" "}
-                              Average Years required to go from education to
-                              desired title
+                              Average years required for someone with your
+                              profile to become {desiredTitle}
                             </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-md-6 col-lg-12 order-1 mb-4 mt-3">
-                      <div className="card h-100">
-                        <div className="card-header">
-                          Companies professionals typically work for before
-                          achieving the desired job title
-                        </div>
-                        <div className="card-body px-3">
-                          <div className="tab-content p-0">
-                            {isLoading ? (
-                              // <Spin
-                              //   style={{ height: "100px" }}
-                              //   tip="Loading"
-                              //   className="mt-3"
-                              //   size="large"
-                              // >
-                              //   <div className="content" />
-                              // </Spin>
-                              <p className=" py-2 px-3">No data</p>
-                            ) : (
-                              <div>
-                                {uniqueCompanies.length > 0 ? (
-                                  <div className="d-flex flex-wrap">
-                                    {uniqueCompanies.map((company) => (
-                                      <p
-                                        style={{
-                                          color: "white",
-                                          background: "rgb(23, 78, 166)",
-                                        }}
-                                        className="card shadow text-left  py-2 px-3 m-2"
-                                        key={company}
-                                      >
-                                        {formatTextValue(company)}
-                                      </p>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <div
-                                    style={{
-                                      height: "100px",
-                                      display: "grid",
-                                      placeItems: "center",
-                                    }}
-                                  >
-                                    {" "}
-                                    <p>No data found</p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -861,32 +789,8 @@ const TemplateComponent: React.FC = () => {
                   </div>
 
                   <div className="col-12 col-md-8 col-lg-4 order-3 order-md-2">
-                    <div className="row">
-                      <div className="col-6 mb-4">
-                        <div className="card">
-                          <div className="card-body">
-                            <div className="card-title d-flex align-items-start justify-content-between">
-                              <div className="avatar flex-shrink-0">
-                                <img
-                                  src="../assets/img/icons/unicons/paypal.png"
-                                  alt="Credit Card"
-                                  className="rounded"
-                                />
-                              </div>
-                            </div>
-                            <span className="d-block mb-1">
-                              UG Degree Match
-                            </span>
-                            <h3 className="card-title text-nowrap mb-2">
-                              {Math.round((UGDegreeMatch / totalCount) * 100)}%
-                            </h3>
-                            <small className="text-danger fw-semibold">
-                              <i className="bx bx-down-arrow-alt"></i> -14.82%
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-6 mb-4">
+                    <div className="">
+                      <div className="col-12 mb-4">
                         <div className="card">
                           <div className="card-body">
                             <div className="card-title d-flex align-items-start justify-content-between">
@@ -894,17 +798,23 @@ const TemplateComponent: React.FC = () => {
                                 <img
                                   src="../assets/img/icons/unicons/cc-primary.png"
                                   alt="Credit Card"
-                                  className="rounded"
+                                  className="rounded "
+                                  style={{ marginRight: "8px" }}
                                 />
                               </div>
                             </div>
                             <span className="fw-semibold d-block mb-1">
-                              UG Tier Match
+                              Percentage of desired title profiles in selected
+                              UG Degree{" "}
                             </span>
                             <h3 className="card-title mb-2">
                               {" "}
-                              {Math.round((UGTierMatch / totalCount) * 100)}%
+                              {Math.round(
+                                (ugDegreeAndDesiredMatch / UGDegreeMatch) * 100
+                              )}{" "}
+                              %
                             </h3>
+                            <p></p>
                             <small className="text-success fw-semibold">
                               <i className="bx bx-up-arrow-alt"></i> +28.14%
                             </small>
@@ -912,7 +822,6 @@ const TemplateComponent: React.FC = () => {
                         </div>
                       </div>
                     </div>
-
                     <div className="row">
                       <div className="col-12 mb-4">
                         <div className="card">
@@ -984,16 +893,80 @@ const TemplateComponent: React.FC = () => {
                                 </div>
                               )}
                               <p>
-                                Top cities for professionals based on your
-                                background and desired job title
+                                Top cities match for your profile who become{" "}
+                                {desiredTitle}
                               </p>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="">
-                      <div className="col-12 mb-4">
+                    <div className="card mb-3">
+                      <div className="card-body">
+                        <div className="card-title">
+                          <strong>Your profile matching in our database</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-lg-6 col-md-12 col-6 mb-4">
+                        <div className="card">
+                          <div className="card-body">
+                            <div className="card-title d-flex align-items-start justify-content-between">
+                              <div className="avatar flex-shrink-0">
+                                <img
+                                  src="../assets/img/icons/unicons/chart-success.png"
+                                  alt="chart success"
+                                  className="rounded"
+                                />
+                              </div>
+                            </div>
+                            <span className="fw-semibold d-block mb-1">
+                              Company size
+                            </span>
+                            <h3 className="card-title mb-2">
+                              {Math.round(
+                                (selectedCompanySizeMatch / totalCount) * 100
+                              )}
+                              %
+                            </h3>
+                            <small className="text-success fw-semibold">
+                              <i className="bx bx-up-arrow-alt"></i> +72.80%
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-lg-6 col-md-12 col-6 mb-4">
+                        <div className="card">
+                          <div className="card-body">
+                            <div className="card-title d-flex align-items-start justify-content-between">
+                              <div className="avatar flex-shrink-0">
+                                <img
+                                  src="../assets/img/icons/unicons/wallet-info.png"
+                                  alt="Credit Card"
+                                  className="rounded"
+                                />
+                              </div>
+                            </div>
+                            <span>Sector match</span>
+                            <h3 className="card-title text-nowrap mb-1">
+                              {Math.round(
+                                (selectedCompanySectorMatch / totalCount) * 100
+                              )}
+                              %
+                            </h3>
+                            <small className="text-success fw-semibold">
+                              <i className="bx bx-up-arrow-alt"></i> +28.42%
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-6 mb-4">
                         <div className="card">
                           <div className="card-body">
                             <div className="card-title d-flex align-items-start justify-content-between">
@@ -1005,24 +978,19 @@ const TemplateComponent: React.FC = () => {
                                 />
                               </div>
                             </div>
-                            <span className="fw-semibold d-block mb-1">
-                              Percentage of UG tier profiles in selected UG
-                              Degree
+                            <span className="d-block mb-1">
+                              UG Degree Match
                             </span>
                             <h3 className="card-title text-nowrap mb-2">
-                              {Math.round(
-                                (ugDegreeAndUGTierMatch / UGDegreeMatch) * 100
-                              )}{" "}
-                              %
+                              {Math.round((UGDegreeMatch / totalCount) * 100)}%
                             </h3>
-
                             <small className="text-danger fw-semibold">
                               <i className="bx bx-down-arrow-alt"></i> -14.82%
                             </small>
                           </div>
                         </div>
                       </div>
-                      <div className="col-12 mb-4">
+                      <div className="col-6 mb-4">
                         <div className="card">
                           <div className="card-body">
                             <div className="card-title d-flex align-items-start justify-content-between">
@@ -1030,23 +998,17 @@ const TemplateComponent: React.FC = () => {
                                 <img
                                   src="../assets/img/icons/unicons/cc-primary.png"
                                   alt="Credit Card"
-                                  className="rounded "
-                                  style={{ marginRight: "8px" }}
+                                  className="rounded"
                                 />
                               </div>
                             </div>
                             <span className="fw-semibold d-block mb-1">
-                              Percentage of desired title profiles in selected
-                              UG Degree{" "}
+                              UG Tier Match
                             </span>
                             <h3 className="card-title mb-2">
                               {" "}
-                              {Math.round(
-                                (ugDegreeAndDesiredMatch / UGDegreeMatch) * 100
-                              )}{" "}
-                              %
+                              {Math.round((UGTierMatch / totalCount) * 100)}%
                             </h3>
-                            <p></p>
                             <small className="text-success fw-semibold">
                               <i className="bx bx-up-arrow-alt"></i> +28.14%
                             </small>
@@ -1061,19 +1023,22 @@ const TemplateComponent: React.FC = () => {
                     <div className="card h-100">
                       <div className="card-header d-flex align-items-center justify-content-between pb-0">
                         <div className="card-title mb-0">
-                          <h5 className="m-0 me-2">
-                            Sector vs Employee counts heatmap
+                          <h5 className="m-0 me-2 mb-5">
+                            Company details matching your profile
                           </h5>
                         </div>
                       </div>
                       <div className="card-body">
-                        <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className=" justify-content-between align-items-center mb-3">
                           <div id="orderStatisticsChart">
                             {isLoading ? (
                               //
                               ""
                             ) : (
                               <div>
+                                <p className="text-center">
+                                  Based on your profile
+                                </p>
                                 {educationOutput.length > 0 ? (
                                   <HeatmapChart data={educationOutput} />
                                 ) : (
@@ -1091,7 +1056,12 @@ const TemplateComponent: React.FC = () => {
                               </div>
                             )}
                           </div>
+                          <p className="text-center mt-5">
+                            Based on your profile and desired title
+                          </p>
+                          <HeatmapChartDegreeVsTitle data={educationOutput} />
                         </div>
+                       
                       </div>
                     </div>
                   </div>
