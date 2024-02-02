@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import LandingPage from "../pages/landing-page";
 import TemplateComponent from "../pages/tool-page";
+import InputPage from "../pages/input-page";
 
 const AppRoute: React.FC = () => {
   return (
@@ -21,6 +22,14 @@ const AppRoute: React.FC = () => {
             <>
               <TemplateComponent />
             </>
+          }
+        />
+        <Route
+          path="/input"
+          element={
+            <div style={{display:"grid",placeItems:"center"}}>
+              <InputPage />
+            </div>
           }
         />
       </Routes>

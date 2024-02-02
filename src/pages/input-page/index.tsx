@@ -6,6 +6,7 @@ import { useApplicationContext } from "../../context/app-context";
 import { colleges } from "../../components/constants/college-options";
 import { collegeTierList } from "../../components/constants/college-tier-list";
 import { formatTextValue } from "../../utils/tool-helper-functions";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -150,6 +151,26 @@ const InputPage: React.FC = () => {
     desiredTitle,
     desiredTitleMatch,
   } = useApplicationContext();
+  const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Check if the screen width is less than a certain value (e.g., 768px) to determine if it's a mobile device
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Add an event listener to handle window resizing
+    window.addEventListener("resize", handleResize);
+
+    // Initial check
+    handleResize();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -520,6 +541,16 @@ const InputPage: React.FC = () => {
                   ))}
               </Select>
             </div>
+            {isMobile ? (
+              <button
+                onClick={() => navigate("/tool")}
+                className="btn btn-primary w-100"
+              >
+                Next
+              </button>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

@@ -71,15 +71,14 @@ const HeatmapChartDegreeVsTitle = ({ data }) => {
     margin: {
       b: 100,
     },
+    responsive: true, // Set the responsive attribute to true
   };
 
-  return (
-    <Plot
-      data={[heatmapTrace]}
-      layout={layout}
-      config={{ displayModeBar: false }}
-    />
-  );
+  const config = {
+    responsive: true,
+    displayModeBar: false,
+  };
+  return <Plot data={[heatmapTrace]} layout={layout} config={config} />;
 };
 
 export default HeatmapChartDegreeVsTitle;

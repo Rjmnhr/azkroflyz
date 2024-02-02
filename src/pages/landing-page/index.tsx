@@ -1,18 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LandingPageStyled } from "./style";
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Check if the screen width is less than a certain value (e.g., 768px) to determine if it's a mobile device
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Add an event listener to handle window resizing
+    window.addEventListener("resize", handleResize);
+
+    // Initial check
+    handleResize();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleNavigate = () => {
-    navigate("/tool");
+    if (isMobile) {
+      navigate("/input");
+    } else {
+      navigate("/tool");
+    }
   };
 
   return (
     <div>
       <LandingPageStyled>
-        <div className="overflow-hidden content-space-t-lg-1" style={{background:"white",height:"100vh"}}>
+        <div
+          className="overflow-hidden content-space-t-lg-1"
+          style={{ background: "white", height: "100vh" }}
+        >
           <div className="container position-relative  content-space-b-2">
             <div>
               <img

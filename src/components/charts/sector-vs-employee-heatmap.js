@@ -88,6 +88,7 @@ const HeatmapChart = ({ data }) => {
     margin: {
       b: 100,
     },
+    responsive: true, // Set the responsive attribute to true
   };
 
   return (
