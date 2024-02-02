@@ -26,6 +26,22 @@ interface AppContextProps {
   setUgDegreeAndDesiredMatch: Dispatch<SetStateAction<number>>;
   desiredTitle: string;
   setDesiredTitle: Dispatch<SetStateAction<string>>;
+  desiredTitleMatch: number;
+  setDesiredTitleMatch: Dispatch<SetStateAction<number>>;
+  isInputsEntered: boolean;
+  setIsInputsEntered: Dispatch<SetStateAction<boolean>>;
+  selectedCompanySizePrevMatch: number;
+  setSelectedCompanySizePrevMatch: Dispatch<SetStateAction<number>>;
+  selectedCompanySectorPrevMatch: number;
+  setSelectedCompanySectorPrevMatch: Dispatch<SetStateAction<number>>;
+  UGDegreePrevMatch: number;
+  setUGDegreePrevMatch: Dispatch<SetStateAction<number>>;
+  UGTierPrevMatch: number;
+  setUGTierPrevMatch: Dispatch<SetStateAction<number>>;
+  ugDegreeAndUGTierPrevMatch: number;
+  setUgDegreeAndUGTierPrevMatch: Dispatch<SetStateAction<number>>;
+  ugDegreeAndDesiredPrevMatch: number;
+  setUgDegreeAndDesiredPrevMatch: Dispatch<SetStateAction<number>>;
 }
 
 const MyContext = createContext<AppContextProps | undefined>(undefined);
@@ -50,6 +66,19 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   const [ugDegreeAndDesiredMatch, setUgDegreeAndDesiredMatch] =
     useState<number>(0);
   const [desiredTitle, setDesiredTitle] = useState<string>("");
+  const [desiredTitleMatch, setDesiredTitleMatch] = useState<number>(0);
+  const [isInputsEntered, setIsInputsEntered] = useState<boolean>(false);
+  const [selectedCompanySizePrevMatch, setSelectedCompanySizePrevMatch] =
+    useState<number>(1);
+  const [selectedCompanySectorPrevMatch, setSelectedCompanySectorPrevMatch] =
+    useState<number>(0);
+
+  const [UGDegreePrevMatch, setUGDegreePrevMatch] = useState<number>(0);
+  const [UGTierPrevMatch, setUGTierPrevMatch] = useState<number>(0);
+  const [ugDegreeAndDesiredPrevMatch, setUgDegreeAndDesiredPrevMatch] =
+    useState<number>(0);
+  const [ugDegreeAndUGTierPrevMatch, setUgDegreeAndUGTierPrevMatch] =
+    useState<number>(0);
 
   const value: AppContextProps = {
     storedDataString,
@@ -70,6 +99,23 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     setUgDegreeAndDesiredMatch,
     desiredTitle,
     setDesiredTitle,
+    isInputsEntered,
+    setIsInputsEntered,
+    desiredTitleMatch,
+    setDesiredTitleMatch,
+    selectedCompanySizePrevMatch,
+    setSelectedCompanySizePrevMatch,
+    selectedCompanySectorPrevMatch,
+    setSelectedCompanySectorPrevMatch,
+
+    UGDegreePrevMatch,
+    setUGDegreePrevMatch,
+    UGTierPrevMatch,
+    setUGTierPrevMatch,
+    ugDegreeAndUGTierPrevMatch,
+    setUgDegreeAndUGTierPrevMatch,
+    ugDegreeAndDesiredPrevMatch,
+    setUgDegreeAndDesiredPrevMatch,
   };
 
   return <MyContext.Provider value={value}>{children}</MyContext.Provider>;

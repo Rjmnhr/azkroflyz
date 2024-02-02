@@ -3,7 +3,7 @@ import VerticalBarGraph from "@chartiful/react-vertical-bar-graph";
 const VerticalBarGraphComponent = () => {
   return (
     <div>
-      {/* <VerticalBarGraph
+      <VerticalBarGraph
         data={[20, 45, 28, 80, 99, 43, 50]}
         labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]}
         width={300}
@@ -17,7 +17,7 @@ const VerticalBarGraphComponent = () => {
           },
         }}
         style={{}}
-      /> */}
+      />
 
       <HorizontalBarGraph
         data={[125, 100, 50, 75, 100, 125]}

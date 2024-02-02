@@ -1,254 +1,42 @@
 import React, { useEffect, useState } from "react";
-
-import InputPage, { formatTextValue } from "../input-page";
-import AxiosInstance from "../../components/axios";
+import AxiosInstance from "../../config/axios";
 import { useApplicationContext } from "../../context/app-context";
 import { Divider, Progress } from "antd";
-
-import HeatmapChart from "../../components/heat-map";
-import WorldMapComponent from "../../components/world-map/react-svg";
-import ApexChart from "../../components/apex-charts";
-import ApexPieChart from "../../components/apex-pie-chart";
-import HeatmapChartDegreeVsTitle from "../../components/heat-map/degree-vs-title";
-
-
-interface Profile {
-  [key: string]: string | number | null;
-}
-
-interface TitleCount {
-  title: string;
-  count: number;
-}
-
-interface LocationCount {
-  location: string;
-  count: number;
-}
-
-interface SkillCount {
-  skill: string;
-  count: number;
-}
-
-function getUniqueCompanies(
-  desiredTitle: string,
-  profiles: Profile[]
-): string[] {
-  const uniqueCompaniesSet = new Set<string>();
-
-  profiles.forEach((profile) => {
-    const mappedTitleIndex = [...Array(8).keys()].find((index) => {
-      const mappedTitleKey = `mapped_title_${index}`;
-      return profile[mappedTitleKey] === desiredTitle;
-    });
-
-    if (mappedTitleIndex !== undefined) {
-      for (let i = 0; i < mappedTitleIndex; i++) {
-        const companyKey = `org_${i}`;
-        const company = profile[companyKey];
-
-        if (company !== null && typeof company === "string") {
-          uniqueCompaniesSet.add(company);
-        }
-      }
-    }
-  });
-
-  const uniqueCompaniesArray = Array.from(uniqueCompaniesSet);
-  return uniqueCompaniesArray;
-}
-
-function calculateAverageJobChanges(
-  desiredTitle: string,
-  profiles: Profile[]
-): number {
-  const totalJobChanges = profiles.map((profile) => {
-    const mappedTitleIndex = [...Array(8).keys()].find((index) => {
-      const mappedTitleKey = `mapped_title_${index}`;
-      return profile[mappedTitleKey] === desiredTitle;
-    });
-
-    // Check if mappedTitleIndex is undefined
-    if (mappedTitleIndex === undefined) {
-      return 0; // or any other value that makes sense in your context
-    }
-
-    return 7 - mappedTitleIndex;
-  });
-
-  // Calculate the average
-  const sumJobChanges = totalJobChanges.reduce(
-    (sum, jobChange) => sum + jobChange,
-    0
-  );
-  const averageJobChanges = sumJobChanges / profiles.length;
-
-  return averageJobChanges;
-}
-function calculateAverageDuration(
-  desiredTitle: string,
-  profiles: Profile[]
-): number {
-  // Calculate total duration for each profile based on desired title's position
-  const totalDurations = profiles.map((profile) => {
-    const mappedTitleIndex = [...Array(8).keys()].find((index) => {
-      const mappedTitleKey = `mapped_title_${index}`;
-      return profile[mappedTitleKey] === desiredTitle;
-    });
-
-    if (mappedTitleIndex !== undefined) {
-      let totalDuration = 0;
-      for (let i = mappedTitleIndex; i <= 7; i++) {
-        const jobDurationKey = `job_${i}_duration`;
-        const jobDuration = profile[jobDurationKey];
-
-        if (jobDuration !== null && typeof jobDuration === "number") {
-          totalDuration += jobDuration;
-        }
-      }
-      return totalDuration;
-    } else {
-      return 0; // Return 0 if desired title not found in mapped titles
-    }
-  });
-
-  // Filter out profiles with 0 total duration
-  const nonZeroDurations = totalDurations.filter((duration) => duration > 0);
-
-  // Calculate the average duration
-  const totalDurationSum = nonZeroDurations.reduce(
-    (sum, duration) => sum + duration,
-    0
-  );
-  const averageDuration =
-    nonZeroDurations.length > 0
-      ? totalDurationSum / nonZeroDurations.length
-      : 0;
-
-  return Math.round(averageDuration);
-}
-
-function getTopTitles(profiles: Profile[]): TitleCount[] {
-  const allMappedTitles: string[] = [];
-
-  // Collect all non-null mapped_titles from each profile
-  profiles.forEach((profile) => {
-    for (let i = 0; i <= 7; i++) {
-      const mappedTitle = profile[`mapped_title_${i}`];
-
-      if (mappedTitle !== null && typeof mappedTitle === "string") {
-        allMappedTitles.push(mappedTitle);
-      }
-    }
-  });
-
-  // Count the occurrences of each mapped_title
-  const titleCounts: Record<string, number> = {};
-  allMappedTitles.forEach((title) => {
-    titleCounts[title] = (titleCounts[title] || 0) + 1;
-  });
-
-  // Convert titleCounts into an array of objects for sorting
-  const sortedTitles: TitleCount[] = Object.keys(titleCounts).map((title) => ({
-    title,
-    count: titleCounts[title],
-  }));
-
-  // Sort titles based on the count in descending order
-  sortedTitles.sort((a, b) => b.count - a.count);
-
-  // Calculate total number of profiles
-  const totalProfiles = profiles.length;
-
-  // Calculate percentage values for each title count
-  const top5TitlesWithPercentage = sortedTitles.slice(0, 5).map((title) => ({
-    ...title,
-    percentage: Math.round((title.count / totalProfiles) * 100),
-  }));
-
-  return top5TitlesWithPercentage;
-}
-
-function getTopJobLocations(profiles: Profile[]): LocationCount[] {
-  const allJobLocations: string[] = [];
-
-  // Collect all non-null job locations from each profile
-  profiles.forEach((profile) => {
-    for (let i = 0; i <= 7; i++) {
-      const jobLocation = profile[`job_${i}_location`];
-
-      if (jobLocation !== null && typeof jobLocation === "string") {
-        allJobLocations.push(jobLocation);
-      }
-    }
-  });
-
-  // Count the occurrences of each job location
-  const locationCounts: Record<string, number> = {};
-  allJobLocations.forEach((location) => {
-    locationCounts[location] = (locationCounts[location] || 0) + 1;
-  });
-
-  // Convert locationCounts into an array of objects for sorting
-  const sortedLocations: LocationCount[] = Object.keys(locationCounts).map(
-    (location) => ({
-      location,
-      count: locationCounts[location],
-    })
-  );
-
-  // Sort locations based on the count in descending order
-  sortedLocations.sort((a, b) => b.count - a.count);
-
-  // Select the top 5 locations
-  const top5Locations = sortedLocations.slice(0, 5);
-
-  return top5Locations;
-}
-
-function getTopSkills(profiles: Profile[]): SkillCount[] {
-  const allSkills: string[] = [];
-
-  // Collect all non-null skills from each profile
-  profiles.forEach((profile) => {
-    for (let i = 0; i <= 19; i++) {
-      const skill = profile[`skill_${i}`];
-
-      if (skill !== null && typeof skill === "string") {
-        allSkills.push(skill);
-      }
-    }
-  });
-
-  // Count the occurrences of each skill
-  const skillCounts: Record<string, number> = {};
-  allSkills.forEach((skill) => {
-    skillCounts[skill] = (skillCounts[skill] || 0) + 1;
-  });
-
-  // Convert skillCounts into an array of objects for sorting
-  const sortedSkills: SkillCount[] = Object.keys(skillCounts).map((skill) => ({
-    skill: formatTextValue(skill),
-    count: skillCounts[skill],
-  }));
-
-  // Sort skills based on the count in descending order
-  sortedSkills.sort((a, b) => b.count - a.count);
-
-  // Calculate total number of profiles
-  const totalProfiles = profiles.length;
-
-  // Calculate percentage values for each skill count
-  const top5SkillsWithPercentage = sortedSkills.slice(0, 5).map((skill) => ({
-    ...skill,
-    percentage: Math.round((skill.count / totalProfiles) * 100),
-  }));
-
-  return top5SkillsWithPercentage;
-}
+import WorldMapComponent from "../../components/india-map";
+import ApexChart from "../../components/charts/top-title-bar-chart";
+import ApexPieChart from "../../components/charts/top-skills-pie-chart";
+import { LoadingOutlined } from "@ant-design/icons";
+import HeatmapChartDegreeVsTitle from "../../components/charts/degree-vs-title-heatmap";
+import HeatmapChart from "../../components/charts/sector-vs-employee-heatmap";
+import {
+  LocationCount,
+  SkillCount,
+  TitleCount,
+} from "../../utils/interface-types";
+import {
+  calculateAverageDuration,
+  calculateAverageJobChanges,
+  formatTextValue,
+  getTopJobLocations,
+  getTopSkills,
+  getTopTitles,
+  getUniqueCompanies,
+} from "../../utils/tool-helper-functions";
+import InputPage from "../input-page";
 
 const TemplateComponent: React.FC = () => {
+  const {
+    selectedCompanySizeMatch,
+    selectedCompanySectorMatch,
+    totalCount,
+    UGDegreeMatch,
+    UGTierMatch,
+    ugDegreeAndDesiredMatch,
+    ugDegreeAndUGTierMatch,
+    desiredTitle,
+    isInputsEntered,
+  } = useApplicationContext();
+
   //eslint-disable-next-line
   const [educationAndDesiredOutput, setEducationAndDesiredOutput] = useState(
     []
@@ -270,18 +58,7 @@ const TemplateComponent: React.FC = () => {
   const [uniqueCompanies, setUniqueCompanies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { storedDataString } = useApplicationContext();
-  const storedData = storedDataString ? JSON.parse(storedDataString) : null;
 
-  const {
-    selectedCompanySizeMatch,
-    selectedCompanySectorMatch,
-    totalCount,
-    UGDegreeMatch,
-    UGTierMatch,
-    ugDegreeAndDesiredMatch,
-    ugDegreeAndUGTierMatch,
-    desiredTitle,
-  } = useApplicationContext();
   useEffect(() => {
     const storedData = storedDataString ? JSON.parse(storedDataString) : null;
     const formData = new FormData();
@@ -361,7 +138,6 @@ const TemplateComponent: React.FC = () => {
     })
       .then(async (res) => {
         const response = await res.data;
-        console.log("🚀 ~ .then ~ response:", JSON.stringify(response));
 
         setEducationOutput(response);
         const topTitles = getTopTitles(response);
@@ -584,13 +360,15 @@ const TemplateComponent: React.FC = () => {
                           <h3 className="card-title text-nowrap mb-2">
                             {Math.round(
                               (ugDegreeAndUGTierMatch / UGDegreeMatch) * 100
-                            )}{" "}
+                            )
+                              ? Math.round(
+                                  (ugDegreeAndUGTierMatch / UGDegreeMatch) * 100
+                                )
+                              : 0}{" "}
                             %
                           </h3>
 
-                          <small className="text-danger fw-semibold">
-                            <i className="bx bx-down-arrow-alt"></i> -14.82%
-                          </small>
+                          <small className="text-danger fw-semibold"></small>
                         </div>
                       </div>
                     </div>
@@ -604,84 +382,112 @@ const TemplateComponent: React.FC = () => {
                             Total Skills
                           </h5>
                           <div id="totalRevenueChart" className="px-2 ">
-                            {isLoading ? (
-                              // <Spin
-                              //   style={{ height: "100px" }}
-                              //   tip="Loading"
-                              //   className="mt-3"
-                              //   size="large"
-                              // >
-                              //   <div className="content" />
-                              // </Spin>
-                              <p className=" py-2 px-3">No data</p>
-                            ) : (
-                              <div
-                                className="mb-3"
-                                style={{
-                                  display: "grid",
-                                  placeItems: "center",
-                                }}
-                              >
-                                {top5Skills.length > 1 ? (
-                                  <div>
-                                    <ApexPieChart data={top5Skills} />
-                                    <p className="text-start">
-                                      {" "}
-                                      Top skills you need to become the desired
-                                      title
-                                    </p>
-                                  </div>
-                                ) : (
+                            {isInputsEntered ? (
+                              <div>
+                                {" "}
+                                {isLoading ? (
                                   <div
                                     style={{
                                       height: "100px",
                                       display: "grid",
                                       placeItems: "center",
                                     }}
+                                    className="mt-3"
                                   >
-                                    <p>No data found</p>
+                                    Loading..
+                                    <LoadingOutlined />
+                                  </div>
+                                ) : (
+                                  <div
+                                    className="mb-3"
+                                    style={{
+                                      display: "grid",
+                                      placeItems: "center",
+                                    }}
+                                  >
+                                    {top5Skills.length > 1 ? (
+                                      <div>
+                                        <ApexPieChart data={top5Skills} />
+                                        <p className="text-start">
+                                          {" "}
+                                          Top skills you need to become the
+                                          desired title
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "100px",
+                                          display: "grid",
+                                          placeItems: "center",
+                                        }}
+                                      >
+                                        <p>No data found</p>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
+                            ) : (
+                              <p className=" py-2 px-3">No data</p>
                             )}
+
                             <Divider />
                             <h5 className="card-header m-0 me-2 pb-3">
                               Popular Titles
                             </h5>
-                            {isLoading ? (
-                              //
-                              <p className=" py-2 px-4  m-0 me-2 pb-3 container">
-                                No data
-                              </p>
-                            ) : (
-                              <div
-                                style={{
-                                  display: "grid",
-                                  placeItems: "center",
-                                }}
-                                className="mt-3"
-                              >
-                                {top5TitleData.length > 1 ? (
-                                  <div>
-                                    <ApexChart top5TitleData={top5TitleData} />
-                                    <p className="container">
-                                      {" "}
-                                      Most popular titles for your profile
-                                    </p>
-                                  </div>
-                                ) : (
+                            {isInputsEntered ? (
+                              <div>
+                                {" "}
+                                {isLoading ? (
                                   <div
                                     style={{
                                       height: "100px",
                                       display: "grid",
                                       placeItems: "center",
                                     }}
+                                    className="mt-3"
                                   >
-                                    {" "}
-                                    <p>No data found</p>
+                                    Loading..
+                                    <LoadingOutlined />
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      display: "grid",
+                                      placeItems: "center",
+                                    }}
+                                    className="mt-3"
+                                  >
+                                    {top5TitleData.length > 1 ? (
+                                      <div>
+                                        <ApexChart
+                                          top5TitleData={top5TitleData}
+                                        />
+                                        <p className="container">
+                                          {" "}
+                                          Most popular titles for your profile
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "100px",
+                                          display: "grid",
+                                          placeItems: "center",
+                                        }}
+                                      >
+                                        {" "}
+                                        <p>No data found</p>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
+                            ) : (
+                              <p className=" py-2 px-4  m-0 me-2 pb-3 container">
+                                No data
+                              </p>
                             )}
                           </div>
                         </div>
@@ -716,10 +522,8 @@ const TemplateComponent: React.FC = () => {
                             <p style={{ fontSize: "14px" }}>
                               {" "}
                               Percentage of profiles similar to you became the{" "}
-                              {desiredTitle}
-                              <br />
                               <span className="text-primary">
-                                {formatTextValue(storedData?.DesiredTitle)}
+                                {desiredTitle}
                               </span>{" "}
                             </p>
                             <Progress
@@ -750,7 +554,10 @@ const TemplateComponent: React.FC = () => {
                             <p>
                               {" "}
                               Average job change required for someone with your
-                              profile to become {desiredTitle}
+                              profile to become{" "}
+                              <span className="text-primary">
+                                {desiredTitle}
+                              </span>{" "}
                             </p>
                             <Progress
                               className="mb-3"
@@ -780,7 +587,10 @@ const TemplateComponent: React.FC = () => {
                             <p style={{ fontSize: "14px" }}>
                               {" "}
                               Average years required for someone with your
-                              profile to become {desiredTitle}
+                              profile to become{" "}
+                              <span className="text-primary">
+                                {desiredTitle}
+                              </span>{" "}
                             </p>
                           </div>
                         </div>
@@ -811,13 +621,16 @@ const TemplateComponent: React.FC = () => {
                               {" "}
                               {Math.round(
                                 (ugDegreeAndDesiredMatch / UGDegreeMatch) * 100
-                              )}{" "}
+                              )
+                                ? Math.round(
+                                    (ugDegreeAndDesiredMatch / UGDegreeMatch) *
+                                      100
+                                  )
+                                : 0}{" "}
                               %
                             </h3>
                             <p></p>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +28.14%
-                            </small>
+                            <small className="text-success fw-semibold"></small>
                           </div>
                         </div>
                       </div>
@@ -833,68 +646,85 @@ const TemplateComponent: React.FC = () => {
                                   Year 2024
                                 </span>
                               </div>
-                              {isLoading ? (
-                                // <Spin
-                                //   style={{ height: "100px" }}
-                                //   tip="Loading"
-                                //   className="mt-3"
-                                //   size="large"
-                                // >
-                                //   <div className="content" />
-                                // </Spin>
-                                <p className=" py-2 px-3">No data</p>
-                              ) : (
+                              {isInputsEntered ? (
                                 <div>
-                                  {top5Cities.length > 1 ? (
-                                    <div className="d-flex align-items-center justify-content-center ">
-                                      <div className="col-6">
-                                        <WorldMapComponent
-                                          topCities={capitalizedLocations}
-                                        />
-                                      </div>
-                                      <div
-                                        className="col-6"
-                                        style={{
-                                          display: "grid",
-                                          placeItems: "center",
-                                        }}
-                                      >
-                                        <div className="text-left">
-                                          {top5Cities.map(
-                                            (item: LocationCount, index) => (
-                                              <p
-                                                style={{ fontWeight: "bold" }}
-                                                key={item.location}
-                                              >
-                                                <span>{index + 1}.</span>{" "}
-                                                <span className="text-primary">
-                                                  {formatTextValue(
-                                                    item.location
-                                                  )}
-                                                </span>
-                                              </p>
-                                            )
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ) : (
+                                  {" "}
+                                  {isLoading ? (
                                     <div
                                       style={{
                                         height: "100px",
                                         display: "grid",
                                         placeItems: "center",
                                       }}
+                                      className="mt-3"
                                     >
-                                      {" "}
-                                      <p>No data found</p>
+                                      Loading..
+                                      <LoadingOutlined />
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      {top5Cities.length > 1 ? (
+                                        <div className="d-flex align-items-center justify-content-center ">
+                                          <div className="col-6">
+                                            <WorldMapComponent
+                                              topCities={capitalizedLocations}
+                                            />
+                                          </div>
+                                          <div
+                                            className="col-6"
+                                            style={{
+                                              display: "grid",
+                                              placeItems: "center",
+                                            }}
+                                          >
+                                            <div className="text-left">
+                                              {top5Cities.map(
+                                                (
+                                                  item: LocationCount,
+                                                  index
+                                                ) => (
+                                                  <p
+                                                    style={{
+                                                      fontWeight: "bold",
+                                                    }}
+                                                    key={item.location}
+                                                  >
+                                                    <span>{index + 1}.</span>{" "}
+                                                    <span className="text-primary">
+                                                      {formatTextValue(
+                                                        item.location
+                                                      )}
+                                                    </span>
+                                                  </p>
+                                                )
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div
+                                          style={{
+                                            height: "100px",
+                                            display: "grid",
+                                            placeItems: "center",
+                                          }}
+                                        >
+                                          {" "}
+                                          <p>No data found</p>
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                 </div>
+                              ) : (
+                                <p className=" py-2 px-3">No data</p>
                               )}
+
                               <p>
                                 Top cities match for your profile who become{" "}
-                                {desiredTitle}
+                                <span className="text-primary">
+                                  {desiredTitle}
+                                </span>{" "}
                               </p>
                             </div>
                           </div>
@@ -931,9 +761,7 @@ const TemplateComponent: React.FC = () => {
                               )}
                               %
                             </h3>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +72.80%
-                            </small>
+                            <small className="text-success fw-semibold"></small>
                           </div>
                         </div>
                       </div>
@@ -957,9 +785,7 @@ const TemplateComponent: React.FC = () => {
                               )}
                               %
                             </h3>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +28.42%
-                            </small>
+                            <small className="text-success fw-semibold"></small>
                           </div>
                         </div>
                       </div>
@@ -984,9 +810,7 @@ const TemplateComponent: React.FC = () => {
                             <h3 className="card-title text-nowrap mb-2">
                               {Math.round((UGDegreeMatch / totalCount) * 100)}%
                             </h3>
-                            <small className="text-danger fw-semibold">
-                              <i className="bx bx-down-arrow-alt"></i> -14.82%
-                            </small>
+                            <small className="text-danger fw-semibold"></small>
                           </div>
                         </div>
                       </div>
@@ -1009,9 +833,7 @@ const TemplateComponent: React.FC = () => {
                               {" "}
                               {Math.round((UGTierMatch / totalCount) * 100)}%
                             </h3>
-                            <small className="text-success fw-semibold">
-                              <i className="bx bx-up-arrow-alt"></i> +28.14%
-                            </small>
+                            <small className="text-success fw-semibold"></small>
                           </div>
                         </div>
                       </div>
@@ -1061,14 +883,13 @@ const TemplateComponent: React.FC = () => {
                           </p>
                           <HeatmapChartDegreeVsTitle data={educationOutput} />
                         </div>
-                       
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <footer className="content-footer footer bg-footer-theme">
+              {/* <footer className="content-footer footer bg-footer-theme">
                 <div className="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                   <div className="mb-2 mb-md-0"></div>
                   <div>
@@ -1108,7 +929,7 @@ const TemplateComponent: React.FC = () => {
                     </a>
                   </div>
                 </div>
-              </footer>
+              </footer> */}
 
               <div className="content-backdrop fade"></div>
             </div>

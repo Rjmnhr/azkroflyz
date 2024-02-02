@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import LandingPage from "../pages/landing-page";
-import TemplateComponent from "../pages/template";
+import TemplateComponent from "../pages/tool-page";
 
 const AppRoute: React.FC = () => {
   return (

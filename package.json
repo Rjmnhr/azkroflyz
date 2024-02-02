@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.3.0",
     "@chartiful/react-chart-builder": "^0.1.6",
     "@chartiful/react-horizontal-bar-graph": "^0.1.6",
     "@chartiful/react-vertical-bar-graph": "^0.1.6",
