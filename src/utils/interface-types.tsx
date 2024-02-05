@@ -17,7 +17,6 @@ export interface SkillCount {
   count: number;
 }
 
-
 export type PrevMatchesState = {
   desiredTitleMatch: number;
   UGDegreeMatch: number;
@@ -27,3 +26,8 @@ export type PrevMatchesState = {
   ugDegreeAndDesiredMatch: number;
   UGTierMatch: number;
 };
+
+export interface MasterDegreeData {
+  degree: string;
+  colleges: string[];
+}

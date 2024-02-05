@@ -10,6 +10,7 @@ import HeatmapChartDegreeVsTitle from "../../components/charts/degree-vs-title-h
 import HeatmapChart from "../../components/charts/sector-vs-employee-heatmap";
 import {
   LocationCount,
+  MasterDegreeData,
   SkillCount,
   TitleCount,
 } from "../../utils/interface-types";
@@ -18,11 +19,14 @@ import {
   calculateAverageJobChanges,
   formatTextValue,
   getTopJobLocations,
+  getTopMasterDegrees,
   getTopSkills,
   getTopTitles,
   getUniqueCompanies,
 } from "../../utils/tool-helper-functions";
 import InputPage from "../input-page";
+import { MasterDegreeOrganizationGraph } from "../../components/charts/master-degree-flow-chart";
+import CommonJobs from "../../components/test-components/testing-common-jobs";
 
 const TemplateComponent: React.FC = () => {
   const {
@@ -44,6 +48,9 @@ const TemplateComponent: React.FC = () => {
   const [educationOutput, setEducationOutput] = useState([]);
   const [top5TitleData, setTop5TitleData] = useState<TitleCount[]>([]);
   const [top5Cities, setTop5Cities] = useState<LocationCount[]>([]);
+  const [top5MasterDegrees, setTop5MasterDegrees] = useState<
+    MasterDegreeData[]
+  >([]);
   const [capitalizedLocations, setCapitalizedLocations] = useState<string[]>(
     []
   );
@@ -124,6 +131,9 @@ const TemplateComponent: React.FC = () => {
             (item) =>
               item.location.charAt(0).toUpperCase() + item.location.slice(1)
           );
+
+          const topPGDegrees = getTopMasterDegrees(response);
+          setTop5MasterDegrees(topPGDegrees);
 
           setCapitalizedLocations(capitalizedLocationsArr);
           setTop5Cities(topLocations);
@@ -884,11 +894,58 @@ const TemplateComponent: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="row">
+                    <div className="col-12 mb-4 mt-3">
+                      <div className="card">
+                        <div className="card-body">
+                          <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
+                            <div className="card-title">
+                              <h5 className="text-nowrap mb-2">
+                                {" "}
+                                ⁠Do you need advanced degree to go from
+                                education to desired title? If yes, these are
+                                the common advanced degrees and colleges
+                              </h5>
+                            </div>
+
+                            {isInputsEntered ? (
+                              <MasterDegreeOrganizationGraph
+                                degreeData={top5MasterDegrees}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-12 mb-4 mt-3">
+                      <div className="card">
+                        <div className="card-body">
+                          <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
+                            <div className="card-title">
+                              <h5 className="text-nowrap mb-2">
+                                Carrier Progression
+                              </h5>
+                            </div>
+
+                            {isInputsEntered ? (
+                              <CommonJobs jobData={educationAndDesiredOutput} />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   {isMobile ? (
                     ""
                   ) : (
                     <div className="row">
-                      <div className="col-md-12 col-lg-10 col-xl-10 order-0 mb-4">
+                      <div className="col-md-12 col-lg-10 col-xl-10  order-0 mb-4">
                         <div className="card h-100">
                           <div className="card-header d-flex align-items-center justify-content-between pb-0">
                             <div className="card-title mb-0">
@@ -939,48 +996,6 @@ const TemplateComponent: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {/* <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                  <div className="mb-2 mb-md-0"></div>
-                  <div>
-                    <a
-                      href="https://themeselection.com/license/"
-                      className="footer-link me-4"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      License
-                    </a>
-                    <a
-                      href="https://themeselection.com/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="footer-link me-4"
-                    >
-                      More Themes
-                    </a>
-
-                    <a
-                      href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="footer-link me-4"
-                    >
-                      Documentation
-                    </a>
-
-                    <a
-                      href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="footer-link me-4"
-                    >
-                      Support
-                    </a>
-                  </div>
-                </div>
-              </footer> */}
 
                 <div className="content-backdrop fade"></div>
               </div>

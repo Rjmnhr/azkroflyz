@@ -69,17 +69,17 @@ const companySizeOptions = [
   { company_size: "5000+" },
   { company_size: "250-1000" },
 ];
-// const PGDegreeOptions = [
-//   "MBA",
-//   "Masters Degree",
-//   "PGDBA",
-//   "MTECH",
-//   "MCOM",
-//   "MA",
-//   "MCA",
-//   "MSC",
-//   "Master of Laws",
-// ];
+export const PGDegreeOptions = [
+  "MBA",
+  "Masters Degree",
+  "PGDBA",
+  "MTECH",
+  "MCOM",
+  "MA",
+  "MCA",
+  "MSC",
+  "Master of Laws",
+];
 
 // interface UGCollegeTierList {
 //   institute_value: string;

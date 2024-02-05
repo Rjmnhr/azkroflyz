@@ -1,3 +1,4 @@
+import { PGDegreeOptions } from "../pages/input-page";
 import {
   LocationCount,
   Profile,
@@ -230,3 +231,42 @@ export function getTopSkills(profiles: Profile[]): SkillCount[] {
 
   return top5SkillsWithPercentage;
 }
+
+export const getTopMasterDegrees = (
+  applicants: Profile[]
+): { degree: string; colleges: string[] }[] => {
+  const degreeCountMap: { [degree: string]: number } = {};
+  const collegeMap: { [degree: string]: string[] } = {};
+
+  applicants.forEach((applicant) => {
+    for (let i = 0; i < 4; i++) {
+      const degreeKey = `mapped_digree_${i}`;
+      const collegeKey = `mapped_institute_${i}`;
+      const degree = applicant[degreeKey]?.toString();
+      const college = applicant[collegeKey]?.toString();
+
+      if (degree && PGDegreeOptions.includes(degree) && college) {
+        if (!degreeCountMap[degree]) {
+          degreeCountMap[degree] = 0;
+          collegeMap[degree] = [];
+        }
+        degreeCountMap[degree]++;
+        if (!collegeMap[degree].includes(college)) {
+          collegeMap[degree].push(college);
+        }
+      }
+    }
+  });
+
+  const sortedDegrees = Object.keys(degreeCountMap).sort(
+    (a, b) => degreeCountMap[b] - degreeCountMap[a]
+  );
+  console.log("🚀 ~ sortedDegrees:", sortedDegrees)
+
+  return sortedDegrees
+    .slice(0, 5)
+    .map((degree) => ({ degree, colleges: collegeMap[degree] }));
+};
+
+
+
