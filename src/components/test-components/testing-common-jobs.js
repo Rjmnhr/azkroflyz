@@ -34,16 +34,22 @@ const CommonJobs = ({ jobData }) => {
       (profile) => profile[columnPrefix] === title
     );
 
-    const commonSectors = findMostCommonValues(
-      filteredProfiles.map(
-        (profile) => profile[`mapped_company_${index}_industry`]
-      )
+    const sectorValues = filteredProfiles.map(
+      (profile) => profile[`mapped_company_${index}_industry`]
     );
-    const commonSizes = findMostCommonValues(
-      filteredProfiles.map(
-        (profile) => profile[`mapped_company_${index}_emp_count`]
-      )
+
+    const sizeValues = filteredProfiles.map(
+      (profile) => profile[`mapped_company_${index}_emp_count`]
     );
+
+    // Exclude values equal to "unknown" for sectors
+    const filteredSizeValues = sizeValues.filter(
+      (value) => value !== "Unknown"
+    );
+
+    const commonSectors = findMostCommonValues(sectorValues);
+
+    const commonSizes = findMostCommonValues(filteredSizeValues);
 
     return { sectors: commonSectors, sizes: commonSizes };
   };
@@ -88,7 +94,6 @@ const CommonJobs = ({ jobData }) => {
     <>
       <Carousel ref={carouselRef}>
         {finalArray.map((item, index) => {
-          console.log("🚀 ~ {finalArray.map ~ item:", item);
           return (
             <div key={index}>
               {item.length > 1 ? (

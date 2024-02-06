@@ -147,7 +147,6 @@ const InputPage: React.FC = () => {
     setDesiredTitle,
     setIsInputsEntered,
     setDesiredTitleMatch,
-
     desiredTitle,
     desiredTitleMatch,
   } = useApplicationContext();
@@ -386,7 +385,7 @@ const InputPage: React.FC = () => {
     <div>
       <div className="container-fluid d-lg-flex p-0">
         <div
-          className="col-12 col-lg-12  vh-100 p-3  "
+          className="col-12 col-lg-12   p-3  "
           style={{
             display: "grid",
             justifyItems: "start",
