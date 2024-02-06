@@ -203,7 +203,7 @@ const TemplateComponent: React.FC = () => {
 
   return (
     <div className={`  ${isToggleMenu ? "layout-menu-expanded" : ""}  `}>
-      <div className="layout-wrapper layout-content-navbar text-start " >
+      <div className="layout-wrapper layout-content-navbar text-start ">
         <div className="layout-container">
           <aside
             id="layout-menu "
@@ -229,7 +229,7 @@ const TemplateComponent: React.FC = () => {
                 <i className="bx bx-chevron-left bx-sm align-middle"></i>
               </div>
             </div>
-
+       
             <InputPage />
           </aside>
 
@@ -917,12 +917,10 @@ const TemplateComponent: React.FC = () => {
                       <div className="card-body">
                         <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
                           <div className="card-title">
-                            <p className="text-nowrap mb-2">
+                            <h5 className="text-nowrap mb-2">
                               {" "}
-                              ⁠Do you need advanced degree to go from education
-                              to desired title? If yes, these are the common
-                              advanced degrees and colleges
-                            </p>
+                              Prevalence of advanced degrees
+                            </h5>
                           </div>
 
                           {isInputsEntered ? (
@@ -944,7 +942,7 @@ const TemplateComponent: React.FC = () => {
                         <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
                           <div className="card-title">
                             <h5 className="text-nowrap mb-2">
-                              Carrier Progression
+                              Career Progression
                             </h5>
                           </div>
 

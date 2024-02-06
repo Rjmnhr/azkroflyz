@@ -8,7 +8,7 @@ export const MasterDegreeOrganizationGraph = ({ degreeData }) => {
     const result = {
       id: "root",
       value: {
-        name: "Top Master Degrees",
+        name: "Popular Advanced Degrees",
       },
       children: [],
     };

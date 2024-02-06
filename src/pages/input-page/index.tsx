@@ -12,7 +12,6 @@ const { Option } = Select;
 
 const UGDegreeOptions = [
   "BE",
-  "Bachelors Degree",
   "BCOM",
   "BBA",
   "CA",
