@@ -261,12 +261,8 @@ export const getTopMasterDegrees = (
   const sortedDegrees = Object.keys(degreeCountMap).sort(
     (a, b) => degreeCountMap[b] - degreeCountMap[a]
   );
-  console.log("🚀 ~ sortedDegrees:", sortedDegrees)
 
   return sortedDegrees
     .slice(0, 5)
     .map((degree) => ({ degree, colleges: collegeMap[degree] }));
 };
-
-
-

@@ -3,7 +3,7 @@ import { OrganizationGraph } from "@ant-design/graphs";
 import { formatTextValue } from "../../utils/tool-helper-functions";
 
 export const MasterDegreeOrganizationGraph = ({ degreeData }) => {
-  console.log("🚀 ~ MasterDegreeOrganizationGraph ~ degreeData:", degreeData)
+  
   const convertData = (inputArray) => {
     const result = {
       id: "root",

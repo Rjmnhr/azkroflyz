@@ -31,6 +31,8 @@ const customJobOptions = [
   { title: "Head of HR" },
   { title: "President" },
   { title: "CFO" },
+  { title: "CTO" },
+  { title: "CMO" },
   { title: "CEO" },
   { title: "Founder" },
   { title: "Founder and CEO" },

@@ -7,6 +7,14 @@
   pointer-events: none;
 }
 
+.custom-date-class {
+  color: #696cff;  
+}
+
+.vertical-timeline-element-title{
+  color:black
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

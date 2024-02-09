@@ -229,7 +229,7 @@ const TemplateComponent: React.FC = () => {
                 <i className="bx bx-chevron-left bx-sm align-middle"></i>
               </div>
             </div>
-       
+
             <InputPage />
           </aside>
 
@@ -911,6 +911,30 @@ const TemplateComponent: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                <div className="row mb-3">
+                  <div className="col-12 mb-4 mt-3">
+                    <div className="">
+                      <div className="">
+                        <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
+                          <div className="card-title">
+                            <h2 className="text-nowrap mb-5 text-center ">
+                              Career Progression
+                            </h2>
+                          </div>
+
+                          {isInputsEntered ? (
+                            <CommonJobs
+                              jobData={educationAndDesiredOutput}
+                              desiredTitle={desiredTitle}
+                            />
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="row">
                   <div className="col-12 mb-4 ">
                     <div className="card">
@@ -935,73 +959,97 @@ const TemplateComponent: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-12 mb-4 mt-3">
-                    <div className="card">
-                      <div className="card-body">
-                        <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
-                          <div className="card-title">
-                            <h5 className="text-nowrap mb-2">
-                              Career Progression
-                            </h5>
-                          </div>
 
-                          {isInputsEntered ? (
-                            <CommonJobs jobData={educationAndDesiredOutput} />
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 {isMobile ? (
                   ""
                 ) : (
-                  <div className="row">
-                    <div className="col-md-12 col-lg-10 col-xl-10  order-0 mb-4">
-                      <div className="card h-100">
-                        <div className="card-header d-flex align-items-center justify-content-between pb-0">
-                          <div className="card-title mb-0">
-                            <h5 className="m-0 me-2 mb-5">
-                              Company details matching your profile
-                            </h5>
+                  <div>
+                    <div className="row">
+                      <div className="col-md-12 col-lg-10 col-xl-10  order-0 mb-4">
+                        <div className="card h-100">
+                          <div className="card-header d-flex align-items-center justify-content-between pb-0">
+                            <div className="card-title mb-0">
+                              <h5 className="m-0 me-2 mb-5">
+                                Company details matching your profile
+                              </h5>
+                            </div>
+                          </div>
+
+                          <div className="card-body">
+                            <div className=" justify-content-between align-items-center mb-3">
+                              <div id="orderStatisticsChart">
+                                {isLoading ? (
+                                  //
+                                  ""
+                                ) : (
+                                  <div className="w-100">
+                                    <p className="text-start">
+                                      Based on your profile
+                                    </p>
+                                    {educationOutput.length > 0 ? (
+                                      <HeatmapChart data={educationOutput} />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "100px",
+                                          display: "grid",
+                                          placeItems: "center",
+                                        }}
+                                      >
+                                        {" "}
+                                        <p>No data found</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      </div>
+                    </div>
 
-                        <div className="card-body">
-                          <div className=" justify-content-between align-items-center mb-3">
-                            <div id="orderStatisticsChart">
-                              {isLoading ? (
-                                //
-                                ""
-                              ) : (
-                                <div className="w-100">
-                                  <p className="text-center">
-                                    Based on your profile
-                                  </p>
-                                  {educationOutput.length > 0 ? (
-                                    <HeatmapChart data={educationOutput} />
-                                  ) : (
-                                    <div
-                                      style={{
-                                        height: "100px",
-                                        display: "grid",
-                                        placeItems: "center",
-                                      }}
-                                    >
-                                      {" "}
-                                      <p>No data found</p>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
+                    <div className="row">
+                      <div className="col-md-12 col-lg-10 col-xl-10  order-0 mb-4">
+                        <div className="card h-100">
+                          <div className="card-header d-flex align-items-center justify-content-between pb-0">
+                            <div className="card-title mb-0">
+                              <h5 className="m-0 me-2 mb-5">
+                                Company details matching your profile
+                              </h5>
                             </div>
-                            <p className="text-center mt-5">
-                              Based on your profile and desired title
-                            </p>
-                            <HeatmapChartDegreeVsTitle data={educationOutput} />
+                          </div>
+
+                          <div className="card-body">
+                            <div className=" justify-content-between align-items-center mb-3">
+                              <div id="orderStatisticsChart">
+                                {isLoading ? (
+                                  ""
+                                ) : (
+                                  <div className="w-100">
+                                    <p className="text-start">
+                                      Based on your profile and desired title
+                                    </p>
+                                    {educationOutput.length > 0 ? (
+                                      <HeatmapChartDegreeVsTitle
+                                        data={educationOutput}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "100px",
+                                          display: "grid",
+                                          placeItems: "center",
+                                        }}
+                                      >
+                                        {" "}
+                                        <p>No data found</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1009,7 +1057,7 @@ const TemplateComponent: React.FC = () => {
                   </div>
                 )}
               </div>
-
+              <div className="card mt-3"></div>
               <div className="content-backdrop fade"></div>
             </div>
           </div>
