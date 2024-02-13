@@ -46,7 +46,9 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="./assets/js/config.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 
     <title>Azkroflyz</title>
   </head>
@@ -65,6 +67,30 @@
       <script src="./assets/js/main.js"></script>
 
       <script src="./assets/js/dashboards-analytics.js"></script>
+      <script>
+        $(document).ready(function() {
+          // Initialize AOS library with custom settings
+          AOS.init({
+            duration: 1000, // Animation duration in milliseconds (adjust as needed)
+            delay: 200, // Delay before the animation starts in milliseconds (adjust as needed)
+          });
+    
+          // Add a scroll event listener
+          $(window).scroll(function() {
+            // Check each element with the data-aos attribute
+            $("[data-aos]").each(function() {
+              var elementTop = $(this).offset().top;
+              var windowHeight = $(window).height();
+              var scrollPosition = $(window).scrollTop();
+    
+              // If the element is in the viewport, add the aos-animate class
+              if (scrollPosition > elementTop - windowHeight + 100) {
+                $(this).addClass("aos-animate");
+              }
+            });
+          });
+        });
+      </script>
 
       <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Template Main JS File -->

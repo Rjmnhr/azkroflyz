@@ -34,3 +34,17 @@
   .custom-demo-btn:active {
     transform: scale(0.9);
   }
+
+
+  .custom-font-size{
+    font-size: 65px
+  }
+
+  @media (max-width:900px) {
+
+
+  .custom-font-size{
+    font-size: 25px
+  }
+    
+  }

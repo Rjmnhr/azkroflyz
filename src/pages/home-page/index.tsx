@@ -2,9 +2,9 @@ import React from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import collegeStudentImg from "../../images/college-student.png";
+import collegeStudentImg from "../../images/college-student.webp";
 import laptopImg from "../../images/laptop_bg.png";
-import valuesImg from "../../images/img1.jpg";
+// import valuesImg from "../../images/img1.jpg";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import NavBar from "../../components/layout/navbar";
 import { HomePageStyled } from "./style";
@@ -18,32 +18,47 @@ const HomePage = () => {
       <NavBar />
       <HomePageStyled>
         <div
-          className="container py-3 px-0 "
+          className="container-fluid pb-0 px-0 "
           style={{
-            marginTop: "80px",
+            background: "white",
           }}
         >
-          <section id="about" className="about m-0">
-            <div className="container p-0" data-aos="fade-up">
+          <section
+            id="about"
+            className="about m-0"
+            style={{ background: "#83a3f9", paddingTop: "80px" }}
+          >
+            <div className="container p-0">
               <div className="row no-gutters p-0 ">
                 <div
                   className="content container col-xl-7 "
                   style={{ display: "grid", placeItems: "center" }}
                 >
                   <div className="content  pr-3">
-                    <p
+                    <h2
                       style={{
                         textAlign: "center",
-                        fontSize: "25px",
-                        color: "black",
+
+                        color: "white",
                       }}
+                      className=" mb-5"
+                      data-aos="zoom-out"
+                      data-aos-once="true"
                     >
                       Are you a college student?
-                    </p>
-                    <h2 className="mb-5" style={{ color: "black" }}>
-                      {" "}
-                      Navigate Your Career Journey with Precision and Purpose
                     </h2>
+                    <div className="d-flex justify-content-center">
+                      <h2
+                        className="mb-5  col-10"
+                        style={{ color: "rgb(41, 40, 40,0.8)" }}
+                        data-aos="zoom-out"
+                        data-aos-delay="500"
+                        data-aos-once="true"
+                      >
+                        {" "}
+                        Navigate your career journey with precision and purpose
+                      </h2>
+                    </div>
                     <button
                       onClick={() => navigate("/demo")}
                       className="custom-demo-btn mt-3 m-3 "
@@ -91,7 +106,7 @@ const HomePage = () => {
             </div>
           </section>
 
-          <section className="py-5 mb-5 bg-light">
+          <section className="py-5 mb-5 ">
             <div className="col-xl-12 d-flex align-items-stretch mt-5">
               <div className="icon-boxes  d-flex flex-column justify-content-center">
                 <div className="section-title mb-5">
@@ -100,8 +115,9 @@ const HomePage = () => {
                 <div className="row container">
                   <div
                     className="col-md-6 icon-box mb-5"
-                    data-aos="fade-up"
+                    data-aos="slide-up"
                     data-aos-delay="100"
+                    data-aos-once="true"
                   >
                     <i className="bx bx-receipt text-primary"></i>
                     <h4>Personalized Career Insights</h4>
@@ -114,8 +130,9 @@ const HomePage = () => {
                   </div>
                   <div
                     className="col-md-6 icon-box"
-                    data-aos="fade-up"
+                    data-aos="slide-up"
                     data-aos-delay="200"
+                    data-aos-once="true"
                   >
                     <i className="bx bx-cube-alt text-primary"></i>
                     <h4>Comprehensive Career Data</h4>
@@ -129,8 +146,9 @@ const HomePage = () => {
 
                   <div
                     className="col-md-6 icon-box"
-                    data-aos="fade-up"
+                    data-aos="slide-up"
                     data-aos-delay="300"
+                    data-aos-once="true"
                   >
                     <i className="bx bx-images text-primary"></i>
                     <h4>Current Industry Trends</h4>
@@ -144,8 +162,9 @@ const HomePage = () => {
 
                   <div
                     className="col-md-6 icon-box"
-                    data-aos="fade-up"
+                    data-aos="slide-up"
                     data-aos-delay="100"
+                    data-aos-once="true"
                   >
                     <i className="bx bx-receipt text-primary"></i>
                     <h4>User-Friendly Interface</h4>
@@ -161,92 +180,155 @@ const HomePage = () => {
             </div>
           </section>
 
-          <section className="mb-5">
-            <div className="row">
-              <div className="col-12 col-lg-6">
-                <div
-                  style={{
-                    background: `url(${laptopImg})`,
-                    height: "400px",
-                    backgroundPosition: "center",
-                    backgroundSize: "contain",
-                    backgroundRepeat: "no-repeat",
-                    position: "relative",
-                  }}
-                >
+          <section className="mb-5 section-bg ">
+            <div className="row container justify-content-around">
+              <div className="col-12 col-lg-5 card bg-light">
+                <div className="col-12 col-lg-12 ">
                   <div
-                    className="laptop-bg"
                     style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
+                      background: `url(${laptopImg})`,
+                      height: "400px",
+                      backgroundPosition: "center",
+                      backgroundSize: "contain",
+                      backgroundRepeat: "no-repeat",
+                      position: "relative",
                     }}
+                    data-aos="fade-up"
+                    data-aos-delay="200"
+                    data-aos-once="true"
                   >
-                    <img
-                      src={
-                        "https://res.cloudinary.com/dsw1ubwyh/image/upload/v1707483457/dxxzwdkb2yoiktadohvv.png"
-                      }
-                      alt="career insights"
-                    />
+                    <div
+                      className="laptop-bg"
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <img
+                        src={
+                          "https://res.cloudinary.com/dsw1ubwyh/image/upload/v1707483457/dxxzwdkb2yoiktadohvv.png"
+                        }
+                        alt="career insights"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                className="col-12 col-lg-6 "
-                style={{ display: "grid", placeItems: "center" }}
-              >
-                <p
-                  style={{ fontSize: "32px", color: "black" }}
-                  className="col-8 text-start"
+                <div
+                  className="col-12 col-lg-12 "
+                  style={{ display: "grid", placeItems: "center" }}
+                  data-aos="fade-up"
+                  data-aos-delay="300"
+                  data-aos-once="true"
                 >
-                  {" "}
-                  Our reports provide a deep dive into the current landscape,
-                  helping you make informed decisions about your career path.{" "}
-                </p>
+                  <h3
+                    style={{ color: "black" }}
+                    className="col-8 text-start text-primary"
+                  >
+                    {" "}
+                    Empowering Your Career Journey with Insightful Reports
+                  </h3>
+                  <p
+                    style={{ color: "black" }}
+                    className="col-8 text-start fs-5"
+                  >
+                    {" "}
+                    Our reports helps you to understand the current job market.
+                    Get insights on the skills in demand, helping you make
+                    informed decisions for your career. Our goal is to provide
+                    straightforward information to guide you in acquiring the
+                    skills needed for a successful professional journey aligned
+                    with your goals.
+                  </p>
+                </div>
+              </div>
+              <div className="col-12 col-lg-5 card bg-light">
+                <div className="col-12 col-lg-12 ">
+                  <div
+                    style={{
+                      background: `url(${laptopImg})`,
+                      height: "400px",
+                      backgroundPosition: "center",
+                      backgroundSize: "contain",
+                      backgroundRepeat: "no-repeat",
+                      position: "relative",
+                    }}
+                    data-aos="fade-up"
+                    data-aos-delay="200"
+                    data-aos-once="true"
+                  >
+                    <div
+                      className="laptop-bg"
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <img
+                        src={
+                          "https://res.cloudinary.com/dsw1ubwyh/image/upload/v1707741324/zu6occpbgzbsjuv1aaf8.png"
+                        }
+                        alt="career insights"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="col-12 col-lg-12 "
+                  style={{ display: "grid", placeItems: "center" }}
+                  data-aos="fade-up"
+                  data-aos-delay="300"
+                  data-aos-once="true"
+                >
+                  <h3
+                    style={{ color: "black" }}
+                    className="col-8 text-start text-primary"
+                  >
+                    {" "}
+                    Informed Career Decisions with Deep Dive Reports
+                  </h3>
+                  <p
+                    style={{ color: "black" }}
+                    className="col-8 text-start fs-5"
+                  >
+                    {" "}
+                    Delve into our reports for a comprehensive exploration of
+                    the current professional landscape. Our detailed analysis is
+                    designed to empower you with the insights needed to make
+                    well-informed decisions regarding your career path. By
+                    leveraging our reports, you gain a deeper understanding of
+                    industry trends, ensuring your choices align strategically
+                    with your career goals.
+                  </p>
+                </div>
               </div>
             </div>
           </section>
-          <section>
-            <div
-              style={{
-                background: `url(${valuesImg})`,
-                height: "500px",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                position: "relative",
-              }}
-            >
+          <section style={{ marginTop: "100px" }}>
+            <div className="section-title ">
+              <h1 style={{ fontWeight: "bolder", marginBottom: "60px" }}>
+                {" "}
+                HOW DOES AZKROFLYZ BRING VALUE
+              </h1>
+            </div>
+
+            <div className="row " style={{ zIndex: "5", color: "black" }}>
               <div
-                className="laptop-bg"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  background: "rgb(18,18,18,0.6)",
-                  width: "100%",
-                  height: "100%",
-                  display: "grid",
-                  placeItems: "center",
-                }}
+                className="col-md-4 icon-box mb-5"
+                data-aos="slide-up"
+                data-aos-delay="100"
+                data-aos-once="true"
               >
-                <p style={{ zIndex: "1", color: "white", fontSize: "65px" }}>
-                  How does Azkroflyz bring value ?
-                </p>
-                <div
-                  className="row container"
-                  style={{ zIndex: "5", color: "white" }}
-                >
-                  <div
-                    className="col-md-4 icon-box mb-5"
-                    data-aos="fade-up"
-                    data-aos-delay="100"
-                  >
-                    <i className="bx bx-receipt text-primary"></i>
-                    <h4 style={{ color: "white" }}>Skill Gap Analysis</h4>
+                <div className="card">
+                  <div className="card-body">
+                    <h4 className="text-primary" style={{ color: "black" }}>
+                      Skill Gap Analysis
+                    </h4>
                     <div style={{ display: "grid", placeItems: "center" }}>
                       <p className="text-left col-12 col-lg-8 ">
                         Identify key skills needed for success in your chosen
@@ -256,13 +338,19 @@ const HomePage = () => {
                       </p>
                     </div>
                   </div>
-                  <div
-                    className="col-md-4 icon-box"
-                    data-aos="fade-up"
-                    data-aos-delay="200"
-                  >
-                    <i className="bx bx-cube-alt text-primary"></i>
-                    <h4 style={{ color: "white" }}>Job Role Projections</h4>
+                </div>
+              </div>
+              <div
+                className="col-md-4 icon-box"
+                data-aos="slide-up"
+                data-aos-delay="200"
+                data-aos-once="true"
+              >
+                <div className="card">
+                  <div className="card-body">
+                    <h4 className="text-primary" style={{ color: "black" }}>
+                      Job Role Projections
+                    </h4>
                     <div style={{ display: "grid", placeItems: "center" }}>
                       <p className="text-left col-12 col-lg-8 ">
                         Explore future job roles and emerging opportunities
@@ -272,13 +360,19 @@ const HomePage = () => {
                       </p>
                     </div>
                   </div>
-                  <div
-                    className="col-md-4 icon-box"
-                    data-aos="fade-up"
-                    data-aos-delay="300"
-                  >
-                    <i className="bx bx-images text-primary"></i>
-                    <h4 style={{ color: "white" }}>Tailored Career Roadmap</h4>
+                </div>
+              </div>
+              <div
+                className="col-md-4 icon-box"
+                data-aos="slide-up"
+                data-aos-delay="300"
+                data-aos-once="true"
+              >
+                <div className="card">
+                  <div className="card-body">
+                    <h4 className="text-primary" style={{ color: "black" }}>
+                      Tailored Career Roadmap
+                    </h4>
                     <div style={{ display: "grid", placeItems: "center" }}>
                       <p className="text-left col-12 col-lg-8 ">
                         Discover a roadmap personalized to your educational
@@ -292,35 +386,14 @@ const HomePage = () => {
               </div>
             </div>
           </section>
-          <section
-            id="about"
-            style={{
-              backgroundPosition: "center",
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              height: "50vh",
-              display: "grid",
-              placeItems: "center",
-            }}
-            className="about container-fluid mb-5 "
-          >
-            <div style={{ width: "400px" }} className="content">
-              <div
-                className="col-md-12 icon-box"
-                data-aos="fade-up"
-                data-aos-delay="300"
-              >
-                <img
-                  width={50}
-                  src="https://res.cloudinary.com/dsw1ubwyh/image/upload/v1704954909/ce816moxqaisi49tgprk.png"
-                  alt="Salary survey"
-                />
-                <h4 className="mt-3">
-                  Ensured privacy and data security for all user information.
-                </h4>
-              </div>
-            </div>
-          </section>
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path
+              fill="#83a3f9"
+              fill-opacity="1"
+              d="M0,224L80,202.7C160,181,320,139,480,144C640,149,800,203,960,202.7C1120,203,1280,149,1360,122.7L1440,96L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"
+            ></path>
+          </svg>
         </div>
         <FooterComponent />
       </HomePageStyled>

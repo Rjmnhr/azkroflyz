@@ -2,11 +2,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import LandingPage from "../pages/landing-page";
 import TemplateComponent from "../pages/tool-page";
-import InputPage from "../pages/input-page";
 import HomePage from "../pages/home-page";
-import UnderMaintenance from "../components/misc/under-maintenance";
 import LoginComponent from "../components/auth/login";
 import RegisterComponent from "../components/auth/register";
+import PageNotFound from "../components/misc/page-not-found";
+import DemoVideo from "../pages/demo-video-page";
+import ProtectedRoute from "./protected-route";
+import ForgotPassword from "../components/auth/forgot-password";
 
 const AppRoute: React.FC = () => {
   return (
@@ -31,13 +33,27 @@ const AppRoute: React.FC = () => {
         <Route
           path="/tool"
           element={
+            <ProtectedRoute
+              element={
+                <>
+                  <TemplateComponent />
+                </>
+              }
+            />
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
             <>
-              <TemplateComponent />
+              <LoginComponent />
             </>
           }
         />
+
         <Route
-          path="/login"
+          path="/login-app"
           element={
             <>
               <LoginComponent />
@@ -53,23 +69,16 @@ const AppRoute: React.FC = () => {
           }
         />
         <Route
-          path="/demo"
+          path="/forgot-password"
           element={
-            <div
-              style={{ display: "grid", placeItems: "center", height: "100vh" }}
-            >
-              <UnderMaintenance />
-            </div>
+            <>
+              <ForgotPassword />
+            </>
           }
         />
-        <Route
-          path="/input"
-          element={
-            <div style={{ display: "grid", placeItems: "center" }}>
-              <InputPage />
-            </div>
-          }
-        />
+        <Route path="/demo" element={<DemoVideo />} />
+
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   );

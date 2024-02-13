@@ -1,32 +1,25 @@
 const FooterComponent = () => {
   return (
-    <footer id="footer" className="bg bg-dark p-3" style={{ color: "white" }}>
-      <div className="footer-top">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-lg-3 col-md-6 footer-contact text-start">
-       
-              <h3 style={{ color: "white" }}>
-                Azkroflyz<span>.</span>
-              </h3>
-
-              <p>
-                <strong>Indian Headquarter:</strong>
-                <br />
-                11th Main Road, HAL 2nd Stage <br />
-                Indira Nagar, Bangalore,
-                <br />
-                Karnataka-560038
-                <br />
-                <strong>Email:</strong> team@equipaypartners.com
-                <br />
-              </p>
-            </div>
-          </div>
+    <footer className="footer bg-light">
+      <div className="container-fluid d-flex flex-md-row flex-column justify-content-between align-items-md-center gap-1 container-p-x py-3">
+        <div>
+          <a href="/" target="_blank" className="footer-text fw-bolder">
+            Azkroflyz
+          </a>{" "}
+          © 2024
+        </div>
+        <div>
+          <a href="/void" className="footer-link me-4">
+            Help
+          </a>
+          <a href="/void" className="footer-link me-4">
+            Contact
+          </a>
+          <a href="/void" className="footer-link">
+            Terms &amp; Conditions
+          </a>
         </div>
       </div>
-
-
     </footer>
   );
 };
