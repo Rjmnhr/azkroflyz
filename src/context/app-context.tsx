@@ -24,6 +24,8 @@ interface AppContextProps {
   setUgDegreeAndUGTierMatch: Dispatch<SetStateAction<number>>;
   ugDegreeAndDesiredMatch: number;
   setUgDegreeAndDesiredMatch: Dispatch<SetStateAction<number>>;
+  ugDegreeAndCompanyMatch: number;
+  setUgDegreeAndCompanyMatch: Dispatch<SetStateAction<number>>;
   desiredTitle: string;
   setDesiredTitle: Dispatch<SetStateAction<string>>;
   desiredTitleMatch: number;
@@ -42,6 +44,12 @@ interface AppContextProps {
   setUgDegreeAndUGTierPrevMatch: Dispatch<SetStateAction<number>>;
   ugDegreeAndDesiredPrevMatch: number;
   setUgDegreeAndDesiredPrevMatch: Dispatch<SetStateAction<number>>;
+  selectedCompanies: string[];
+  setSelectedCompanies: Dispatch<SetStateAction<string[]>>;
+  byFactor: string;
+  setByFactor: Dispatch<SetStateAction<string>>;
+  displayFactor: string;
+  setDisplayFactor: Dispatch<SetStateAction<string>>;
 }
 
 const MyContext = createContext<AppContextProps | undefined>(undefined);
@@ -65,6 +73,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     useState<number>(0);
   const [ugDegreeAndDesiredMatch, setUgDegreeAndDesiredMatch] =
     useState<number>(0);
+  const [ugDegreeAndCompanyMatch, setUgDegreeAndCompanyMatch] =
+    useState<number>(0);
   const [desiredTitle, setDesiredTitle] = useState<string>("");
   const [desiredTitleMatch, setDesiredTitleMatch] = useState<number>(0);
   const [isInputsEntered, setIsInputsEntered] = useState<boolean>(false);
@@ -79,6 +89,9 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     useState<number>(0);
   const [ugDegreeAndUGTierPrevMatch, setUgDegreeAndUGTierPrevMatch] =
     useState<number>(0);
+  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const [byFactor, setByFactor] = useState<string>("title");
+  const [displayFactor, setDisplayFactor] = useState<string>("");
 
   const value: AppContextProps = {
     storedDataString,
@@ -107,7 +120,6 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     setSelectedCompanySizePrevMatch,
     selectedCompanySectorPrevMatch,
     setSelectedCompanySectorPrevMatch,
-
     UGDegreePrevMatch,
     setUGDegreePrevMatch,
     UGTierPrevMatch,
@@ -116,6 +128,14 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     setUgDegreeAndUGTierPrevMatch,
     ugDegreeAndDesiredPrevMatch,
     setUgDegreeAndDesiredPrevMatch,
+    selectedCompanies,
+    setSelectedCompanies,
+    byFactor,
+    setByFactor,
+    displayFactor,
+    setDisplayFactor,
+    ugDegreeAndCompanyMatch,
+    setUgDegreeAndCompanyMatch,
   };
 
   return <MyContext.Provider value={value}>{children}</MyContext.Provider>;

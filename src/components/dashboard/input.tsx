@@ -1,86 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Select } from "antd";
+import { Radio, RadioChangeEvent, Select } from "antd";
 import AxiosInstance from "../../config/axios";
 
 import { useApplicationContext } from "../../context/app-context";
-import { colleges } from "../../components/constants/college-options";
-import { collegeTierList } from "../../components/constants/college-tier-list";
+import { colleges } from "../constants/college-options";
+import { collegeTierList } from "../constants/college-tier-list";
 import { formatTextValue } from "../../utils/tool-helper-functions";
 import { useNavigate } from "react-router-dom";
+import {
+  DesiredCompanyOptions,
+  UGDegreeOptions,
+  companySectorsOptions,
+  companySizeOptions,
+  customJobOptions,
+} from "../constants/input-options";
 
 const { Option } = Select;
-
-const UGDegreeOptions = [
-  "BE",
-  "BCOM",
-  "BBA",
-  "CA",
-  "BA",
-  "BCA",
-  "BSC",
-  "Bachelor of Laws",
-];
-
-const customJobOptions = [
-  { title: "Account Manager" },
-  { title: "Business Analyst" },
-  { title: "Consultant" },
-  { title: "Software Developer" },
-  { title: "Project Manager" },
-  { title: "Product Manager" },
-  { title: "Head of HR" },
-  { title: "President" },
-  { title: "CFO" },
-  { title: "CTO" },
-  { title: "CMO" },
-  { title: "CEO" },
-  { title: "Founder" },
-  { title: "Founder and CEO" },
-];
-
-const companySectorsOptions = [
-  { company_sector: "Software" },
-  { company_sector: "Hospitality" },
-  { company_sector: "Professional Services" },
-  { company_sector: "Planning and Design" },
-  { company_sector: "Construction" },
-  { company_sector: "Financial Services" },
-  { company_sector: "Manufacturing" },
-  { company_sector: "Media" },
-  { company_sector: "Publishing" },
-  { company_sector: "Education" },
-  { company_sector: "Telecommunications" },
-  { company_sector: "Consumer" },
-  { company_sector: "Government" },
-  { company_sector: "Healthcare" },
-  { company_sector: "Real Estate" },
-  { company_sector: "Sports" },
-  { company_sector: "FMCG" },
-  { company_sector: "Transport, Supply Chain, and Logistics" },
-  { company_sector: "Resources" },
-];
-
-const companySizeOptions = [
-  { company_size: "3-9" },
-  { company_size: "1-3" },
-  { company_size: "50-250" },
-  { company_size: "9-50" },
-  { company_size: "Unknown" },
-  { company_size: "1000-5000" },
-  { company_size: "5000+" },
-  { company_size: "250-1000" },
-];
-export const PGDegreeOptions = [
-  "MBA",
-  "Masters Degree",
-  "PGDBA",
-  "MTECH",
-  "MCOM",
-  "MA",
-  "MCA",
-  "MSC",
-  "Master of Laws",
-];
 
 // interface UGCollegeTierList {
 //   institute_value: string;
@@ -102,7 +37,7 @@ interface JobTitleOptions {
 
 const collegeTierOptions = ["1", "2", "3", "4"];
 
-const InputPage: React.FC = () => {
+const InputComponent: React.FC = () => {
   const [UGDegree, setUGDegree] = useState<string>("");
 
   const [selectedUgCollege, setSelectedUgCollege] = useState<string>("");
@@ -145,9 +80,16 @@ const InputPage: React.FC = () => {
     setUGTierMatch,
     setUgDegreeAndUGTierMatch,
     setUgDegreeAndDesiredMatch,
+    setUgDegreeAndCompanyMatch,
     setDesiredTitle,
     setIsInputsEntered,
     setDesiredTitleMatch,
+    setSelectedCompanies,
+    selectedCompanies,
+    setByFactor,
+    setDisplayFactor,
+    byFactor,
+
     desiredTitle,
     desiredTitleMatch,
   } = useApplicationContext();
@@ -173,25 +115,37 @@ const InputPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      desiredTitle ||
-      UGDegree ||
-      UGTier ||
-      selectedCompanySector ||
-      selectedCompanySize
-    ) {
-      handleOnChangeFetch();
+    if (byFactor === "title") {
+      setDisplayFactor(desiredTitle);
+    } else {
+      setDisplayFactor("Selected companies");
     }
     //eslint-disable-next-line
-  }, [
-    desiredTitle,
-    UGDegree,
+  }, [byFactor, desiredTitle]);
 
-    UGTier,
-    selectedCompanySector,
-    selectedCompanySize,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     desiredTitle ||
+  //     UGDegree ||
+  //     UGTier ||
+  //     selectedCompanySector ||
+  //     selectedCompanySize ||
+  //     selectedCompanies
+  //   ) {
+  //     handleOnChangeFetch();
+  //   }
+  //   //eslint-disable-next-line
+  // }, [
+  //   desiredTitle,
+  //   UGDegree,
+  //   byFactor,
+  //   UGTier,
+  //   selectedCompanySector,
+  //   selectedCompanySize,
+  //   selectedCompanies,
+  // ]);
   const handleOnChangeFetch = () => {
+    setIsInputsEntered(true);
     handleFormSubmit();
     const formData = new FormData();
     formData.append("desired_title", desiredTitle);
@@ -199,6 +153,8 @@ const InputPage: React.FC = () => {
     formData.append("ug_tier", UGTier);
     formData.append("company_size", selectedCompanySize);
     formData.append("company_sector", selectedCompanySector);
+    formData.append("companies", JSON.stringify(selectedCompanies));
+    formData.append("byFactor", byFactor);
     AxiosInstance.post("api/linkedin/data", formData, {
       headers: {
         "Content-Type": "application/json",
@@ -216,6 +172,9 @@ const InputPage: React.FC = () => {
         setUgDegreeAndAdditional(dataObject.row_counts_ug_and_add_title);
         setUgDegreeAndUGTierMatch(dataObject.row_counts_ug_degree_and_ug_tier);
         setUgDegreeAndDesiredMatch(dataObject.row_counts_ug_and_desired_title);
+        setUgDegreeAndCompanyMatch(
+          dataObject.row_counts_ug_and_desired_company
+        );
       })
       .catch((err) => console.log(err));
   };
@@ -231,60 +190,6 @@ const InputPage: React.FC = () => {
     //eslint-disable-next-line
   }, []);
 
-  // useEffect(() => {
-  //   console.log("entered");
-
-  //   AxiosInstance.get("api/linkedin/college-tier")
-  //     .then(async (res) => {
-  //       const response = await res.data;
-  //
-
-  //       setUGCollegeTierList(response);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // useEffect(() => {
-  //   AxiosInstance.get("api/linkedin/ug-colleges")
-  //     .then(async (res) => {
-  //       const response = await res.data;
-  //       setIsCollegeListLoaded(true);
-  //       const filtered = response.filter(
-  //         (item: UGCollegeTierList) => item.institute_value !== null
-  //       );
-  //
-
-  //       setCollegeOptions(filtered);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [UGDegree]);
-
-  // useEffect(() => {
-  //   AxiosInstance.get("api/linkedin/company-size")
-  //     .then(async (res) => {
-  //       const response = await res.data;
-  //
-
-  //       setCompanySize(response);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-  // useEffect(() => {
-  //   AxiosInstance.get("api/linkedin/company-sector")
-  //     .then(async (res) => {
-  //       const response = await res.data;
-
-  //       const filteredResponse = response.filter(
-  //         (company: CompanySectors) => company.company_sector !== null
-  //       );
-  //       console.log(
-  //         "🚀 ~ .then ~ filteredResponse:",
-  //         JSON.stringify(filteredResponse)
-  //       );
-  //       setCompanySectors(filteredResponse);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
   useEffect(() => {
     // Filter out colleges based on the presence of ug_degree
     const filteredData = collegeOptions.filter(
@@ -376,12 +281,26 @@ const InputPage: React.FC = () => {
     setIsTierEditing(true);
   };
 
+  // useEffect(() => {
+  //   if (desiredTitle && UGTier && UGDegree  ) {
+  //     setIsInputsEntered(true);
+  //   }
+  //   //eslint-disable-next-line
+  // }, [desiredTitle, UGTier, UGDegree]);
+
+  const handleSelectCompanies = (value: string[]) => {
+    setSelectedCompanies(value);
+  };
+
   useEffect(() => {
-    if (desiredTitle && UGTier && UGDegree) {
-      setIsInputsEntered(true);
+    if (selectedCompanies?.length === 0) {
+      setByFactor("title");
     }
     //eslint-disable-next-line
-  }, [desiredTitle, UGTier, UGDegree]);
+  }, [selectedCompanies]);
+  const handleRadioChange = (e: RadioChangeEvent) => {
+    setByFactor(e.target.value);
+  };
   return (
     <div>
       <div className="container-fluid d-lg-flex p-0">
@@ -541,15 +460,48 @@ const InputPage: React.FC = () => {
                   ))}
               </Select>
             </div>
+            <div className=" form-group mb-3">
+              <label className="mb-3">Desired popular companies</label>
+              <Select
+                placeholder="Select companies"
+                onChange={handleSelectCompanies}
+                mode="multiple"
+                style={{ width: "100%" }}
+              >
+                {DesiredCompanyOptions.map((company, index) => (
+                  <Option key={index} value={company.value}>
+                    {formatTextValue(company.label)}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+            <p>Show the results based on</p>
+            <Radio.Group
+              onChange={(e) => handleRadioChange(e)}
+              value={byFactor}
+            >
+              <Radio value="title">Title</Radio>
+              <Radio
+                disabled={selectedCompanies.length > 0 ? false : true}
+                value="company"
+              >
+                Company
+              </Radio>
+            </Radio.Group>
             {isMobile ? (
               <button
                 onClick={() => navigate("/tool")}
-                className="btn btn-primary w-100"
+                className="btn btn-primary w-100 mt-5"
               >
                 Next
               </button>
             ) : (
-              ""
+              <button
+                onClick={handleOnChangeFetch}
+                className="btn btn-primary w-100 mt-5"
+              >
+               Submit
+              </button>
             )}
           </div>
         </div>
@@ -558,4 +510,59 @@ const InputPage: React.FC = () => {
   );
 };
 
-export default InputPage;
+export default InputComponent;
+
+// useEffect(() => {
+//   console.log("entered");
+
+//   AxiosInstance.get("api/linkedin/college-tier")
+//     .then(async (res) => {
+//       const response = await res.data;
+//
+
+//       setUGCollegeTierList(response);
+//     })
+//     .catch((err) => console.log(err));
+// }, []);
+
+// useEffect(() => {
+//   AxiosInstance.get("api/linkedin/ug-colleges")
+//     .then(async (res) => {
+//       const response = await res.data;
+//       setIsCollegeListLoaded(true);
+//       const filtered = response.filter(
+//         (item: UGCollegeTierList) => item.institute_value !== null
+//       );
+//
+
+//       setCollegeOptions(filtered);
+//     })
+//     .catch((err) => console.log(err));
+// }, [UGDegree]);
+
+// useEffect(() => {
+//   AxiosInstance.get("api/linkedin/company-size")
+//     .then(async (res) => {
+//       const response = await res.data;
+//
+
+//       setCompanySize(response);
+//     })
+//     .catch((err) => console.log(err));
+// }, []);
+// useEffect(() => {
+//   AxiosInstance.get("api/linkedin/company-sector")
+//     .then(async (res) => {
+//       const response = await res.data;
+
+//       const filteredResponse = response.filter(
+//         (company: CompanySectors) => company.company_sector !== null
+//       );
+//       console.log(
+//         "🚀 ~ .then ~ filteredResponse:",
+//         JSON.stringify(filteredResponse)
+//       );
+//       setCompanySectors(filteredResponse);
+//     })
+//     .catch((err) => console.log(err));
+// }, []);

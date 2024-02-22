@@ -1,4 +1,4 @@
-import { PGDegreeOptions } from "../pages/input-page";
+import { PGDegreeOptions } from "../components/constants/input-options";
 import {
   LocationCount,
   Profile,

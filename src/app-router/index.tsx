@@ -1,7 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import LandingPage from "../pages/landing-page";
-import TemplateComponent from "../pages/tool-page";
 import HomePage from "../pages/home-page";
 import LoginComponent from "../components/auth/login";
 import RegisterComponent from "../components/auth/register";
@@ -9,6 +6,8 @@ import PageNotFound from "../components/misc/page-not-found";
 import DemoVideo from "../pages/demo-video-page";
 import ProtectedRoute from "./protected-route";
 import ForgotPassword from "../components/auth/forgot-password";
+import DashboardPage from "../pages/dashboard-page";
+import AccountPage from "../pages/account-page";
 
 const AppRoute: React.FC = () => {
   return (
@@ -22,24 +21,26 @@ const AppRoute: React.FC = () => {
             </>
           }
         />
-        <Route
-          path="/landing"
-          element={
-            <>
-              <LandingPage />
-            </>
-          }
-        />
+
         <Route
           path="/tool"
           element={
             <ProtectedRoute
               element={
                 <>
-                  <TemplateComponent />
+                  <DashboardPage />
                 </>
               }
             />
+          }
+        />
+
+        <Route
+          path="/account"
+          element={
+            <>
+              <AccountPage />
+            </>
           }
         />
 

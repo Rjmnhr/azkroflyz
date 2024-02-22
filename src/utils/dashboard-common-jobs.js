@@ -1,10 +1,13 @@
 import React from "react";
 
-import { CareerTimeline } from "./time-line";
+import { CareerTimeline } from "../components/charts/career-time-line";
 
 function calculateAverageJobDuration(data, title, index) {
+  const cleanedData = data.filter(
+    (profile) => profile[`rare_or_normal`] === "normal"
+  );
   // Filter profiles based on title and index
-  const filteredProfiles = data.filter(
+  const filteredProfiles = cleanedData.filter(
     (profile) => profile[`mapped_title_${index}`] === title
   );
 
