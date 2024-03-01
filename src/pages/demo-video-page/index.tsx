@@ -5,7 +5,7 @@ import BgVideo from "../../videos/demo.mp4";
 const DemoVideo = () => {
   return (
     <div>
-      <NavBar />
+   <NavBar background={"white"} />
       <div
         style={{
           marginTop: "100px",

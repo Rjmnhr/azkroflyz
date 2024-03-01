@@ -1,9 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputPage from "../../components/dashboard/input";
 import OutputComponent from "../../components/dashboard/output";
+import { home_path } from "../../config/config";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const DashboardPage: React.FC = () => {
   const [isToggleMenu, setIsToggleMenu] = useState<boolean>(true);
+  const [isResultsOpen, setIsResultsOpen] = useState<boolean>(true);
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    // Check if the screen width is less than a certain value (e.g., 768px) to determine if it's a mobile device
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Add an event listener to handle window resizing
+    window.addEventListener("resize", handleResize);
+
+    // Initial check
+    handleResize();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
     <div className={`  ${isToggleMenu ? "layout-menu-expanded" : ""}  `}>
       <div className="layout-wrapper layout-content-navbar text-start ">
@@ -11,33 +33,83 @@ const DashboardPage: React.FC = () => {
           <aside
             id="layout-menu"
             style={{
-              width: "none !important",
               height: "100vh",
               transition: " all 0.5s ease",
+              width: isMinimized ? "30px" : "",
+              position: "relative", // Add relative positioning to the aside container
             }}
-            className="layout-menu menu-vertical menu bg-menu-theme col-lg-3 col-md-4 col-11 "
+            className={`layout-menu menu-vertical menu bg-menu-theme ${
+              isMinimized ? " " : "col-lg-3"
+            }  col-md-4 col-11 `}
           >
-            <div className="app-brand demo">
-              <a href="index.html" className="app-brand-link">
-                <span className="fs-2 demo menu-text fw-bolder ms-2">
-                  Azkroflyz
-                </span>
-              </a>
-
+            {isMobile ? (
+              ""
+            ) : (
               <div
-                onClick={() => setIsToggleMenu(false)}
-                className="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none"
-                style={{ left: "0px" }}
+                style={{
+                  background: "rgb(108,105,225)",
+                  padding: "8px",
+                  borderRadius: "50%",
+                  color: "white",
+                  width: "30px ",
+                  height: "30px",
+                  display: "grid",
+                  placeItems: "center",
+                  margin: "5px",
+                  position: "absolute", // Use absolute positioning for the icon div
+                  top: "5%", // Position at the vertical center
+                  transform: "translateY(-50%)", // Adjust for vertical centering
+                  right: -15, // Position at the right border
+                  cursor: "pointer", // Add cursor pointer for interaction
+                  transition: "background 3s, transform 3s", // Add transition properties
+                }}
+                onClick={() => setIsMinimized(!isMinimized)}
               >
-                <i className="bx bx-chevron-left bx-sm align-middle"></i>
+                {isMinimized ? (
+                  <RightOutlined style={{ fontWeight: "bolder" }} />
+                ) : (
+                  <LeftOutlined style={{ fontWeight: "bolder" }} />
+                )}
               </div>
-            </div>
+            )}
 
             <div
-              className="scrollable-container"
-              style={{ height: "90vh", overflowY: "scroll" }}
+              className={` ${isResultsOpen ? " " : "col-lg-6"} `}
+              style={{ display: isMinimized ? "none" : "block" }}
             >
-              <InputPage />
+              <div className="app-brand demo">
+                <a href={home_path} className="app-brand-link">
+                  <span className="fs-2 demo menu-text fw-bolder ms-2">
+                    Azkroflyz
+                  </span>
+                </a>
+
+                <div
+                  onClick={() => setIsToggleMenu(false)}
+                  className="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none"
+                  style={{
+                    position: "absolute", // Use absolute positioning for the icon div
+                    top: "5%", // Position at the vertical center
+                    transform: "translateY(-50%)", // Adjust for vertical centering
+                    right: -15, // Position at the right border
+                    cursor: "pointer", // Add cursor pointer for interaction
+                    transition: "background 3s, transform 3s", // Add transition properties
+                    width: "40px ",
+                    height: "40px",
+                    display:"grid",
+                 justifyItems:"center"
+                  }}
+                >
+                  <i className="bx bx-chevron-left bx-sm align-middle"></i>
+                </div>
+              </div>
+
+              <div
+                className="scrollable-container"
+                style={{ height: "90vh", overflowY: "scroll" }}
+              >
+                <InputPage setIsResultsOpen={setIsResultsOpen || (() => {})} />
+              </div>
             </div>
           </aside>
 
@@ -114,30 +186,12 @@ const DashboardPage: React.FC = () => {
                         <div className="dropdown-divider"></div>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="/#">
+                        <a className="dropdown-item" href="/account">
                           <i className="bx bx-user me-2"></i>
                           <span className="align-middle">My Profile</span>
                         </a>
                       </li>
-                      <li>
-                        <a className="dropdown-item" href="/#">
-                          <i className="bx bx-cog me-2"></i>
-                          <span className="align-middle">Settings</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="/#">
-                          <span className="d-flex align-items-center align-middle">
-                            <i className="flex-shrink-0 bx bx-credit-card me-2"></i>
-                            <span className="flex-grow-1 align-middle">
-                              Billing
-                            </span>
-                            <span className="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">
-                              4
-                            </span>
-                          </span>
-                        </a>
-                      </li>
+
                       <li>
                         <div className="dropdown-divider"></div>
                       </li>

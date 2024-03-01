@@ -2,6 +2,23 @@ import React from "react";
 
 import { CareerTimeline } from "../components/charts/career-time-line";
 
+const titleValuePoints = {
+  "Account Manager": 2,
+  "Business Analyst": 1,
+  CEO: 3,
+  CFO: 3,
+  CMO: 3,
+  CTO: 3,
+  Consultant: 1,
+  Founder: 3,
+  "Founder and CEO": 3,
+  "Head of HR": 2,
+  President: 3,
+  "Product Manager": 2,
+  "Project Manager": 2,
+  "Software Developer": 1,
+};
+
 function calculateAverageJobDuration(data, title, index) {
   const cleanedData = data.filter(
     (profile) => profile[`rare_or_normal`] === "normal"
@@ -30,17 +47,53 @@ function calculateAverageJobDuration(data, title, index) {
   return roundedAverage;
 }
 
-const findMostCommonValues = (values, boolean) => {
+const findMostCommonValues = (values, i) => {
   const valueCount = countOccurrences(values);
 
   const sortedValues = Object.keys(valueCount)
     .filter((value) => valueCount[value] > 0)
     .sort((a, b) => valueCount[b] - valueCount[a])
     .slice(0, 5);
+  if (i === 1) {
+    console.log("🚀 ~ findMostCommonValues ~ sortedValues:", sortedValues);
+  }
 
   return sortedValues;
 };
+const getLevelForTitle = (title) => {
+  const level = titleValuePoints[title];
+  return level !== undefined ? level : null;
+};
 
+const findMostCommonTitles = (values, i) => {
+  const valueCount = countOccurrences(values);
+
+  const sortedValues = Object.keys(valueCount)
+    .filter((value) => valueCount[value] > 0)
+    .sort((a, b) => {
+      const frequencyComparison = valueCount[b] - valueCount[a];
+
+      if (frequencyComparison === 0) {
+        const levelA = getLevelForTitle(a);
+        const levelB = getLevelForTitle(b);
+
+        // If frequencies are the same, prioritize the one with higher level
+        if (levelA !== undefined && levelB !== undefined) {
+          return levelB - levelA;
+        }
+      }
+
+      // If frequencies are different or levels are not applicable, sort by frequency
+      return frequencyComparison;
+    })
+    .slice(0, 5);
+
+  if (i === 1) {
+    console.log("🚀 ~ findMostCommonValues ~ sortedValues:", sortedValues);
+  }
+
+  return sortedValues;
+};
 const countOccurrences = (values) => {
   const valueCount = {};
 
@@ -78,17 +131,18 @@ const CommonJobs = ({ jobData, desiredTitle }) => {
       (value) => value !== "Unknown"
     );
 
-    const commonSectors = findMostCommonValues(sectorValues, true);
+    const commonSectors = findMostCommonValues(sectorValues);
 
-    const commonSizes = findMostCommonValues(filteredSizeValues, true);
+    const commonSizes = findMostCommonValues(filteredSizeValues);
 
     return { sectors: commonSectors, sizes: commonSizes };
   };
 
   const commonTitles = [];
   for (let i = 0; i <= 5; i++) {
-    commonTitles[i] = findMostCommonValues(
-      filteredProfiles.map((job) => job[`mapped_title_${i}`])
+    commonTitles[i] = findMostCommonTitles(
+      filteredProfiles.map((job) => job[`mapped_title_${i}`]),
+      i
     );
   }
 
@@ -107,11 +161,19 @@ const CommonJobs = ({ jobData, desiredTitle }) => {
     finalArray.push(commonData);
   });
 
+  const desiredTitleLevel = getLevelForTitle(desiredTitle);
+
   // Extracting prevTitle1
   const prevTitle1 = (() => {
     for (let i = 0; i < commonTitles[1].length; i++) {
       const candidate = commonTitles[1][i];
-      if (candidate !== desiredTitle) {
+      const candidateLevel = getLevelForTitle(candidate);
+
+      if (
+        candidate !== desiredTitle &&
+        candidateLevel !== null &&
+        candidateLevel <= desiredTitleLevel
+      ) {
         return candidate;
       }
     }
@@ -122,7 +184,13 @@ const CommonJobs = ({ jobData, desiredTitle }) => {
   const prevTitle2 = (() => {
     for (let i = 0; i < commonTitles[2].length; i++) {
       const candidate = commonTitles[2][i];
-      if (candidate !== desiredTitle && candidate !== prevTitle1) {
+      const candidateLevel = getLevelForTitle(candidate);
+      if (
+        candidate !== desiredTitle &&
+        candidate !== prevTitle1 &&
+        candidateLevel !== null &&
+        candidateLevel <= getLevelForTitle(prevTitle1)
+      ) {
         return candidate;
       }
     }
@@ -132,10 +200,13 @@ const CommonJobs = ({ jobData, desiredTitle }) => {
   const prevTitle3 = (() => {
     for (let i = 0; i < commonTitles[3].length; i++) {
       const candidate = commonTitles[3][i];
+      const candidateLevel = getLevelForTitle(candidate);
       if (
         candidate !== desiredTitle &&
         candidate !== prevTitle1 &&
-        candidate !== prevTitle2
+        candidate !== prevTitle2 &&
+        candidateLevel !== null &&
+        candidateLevel <= getLevelForTitle(prevTitle2)
       ) {
         return candidate;
       }
@@ -146,11 +217,14 @@ const CommonJobs = ({ jobData, desiredTitle }) => {
   const prevTitle4 = (() => {
     for (let i = 0; i < commonTitles[4].length; i++) {
       const candidate = commonTitles[4][i];
+      const candidateLevel = getLevelForTitle(candidate);
       if (
         candidate !== desiredTitle &&
         candidate !== prevTitle1 &&
         candidate !== prevTitle2 &&
-        candidate !== prevTitle3
+        candidate !== prevTitle3 &&
+        candidateLevel !== null &&
+        candidateLevel <= getLevelForTitle(prevTitle3)
       ) {
         return candidate;
       }

@@ -2,6 +2,7 @@ import React from 'react';
 import Chart from 'react-apexcharts';
 
 const ApexChart = ({ top5TitleData }) => {
+
   const options = {
     chart: {
       type: 'bar',
@@ -49,6 +50,7 @@ const ApexChart = ({ top5TitleData }) => {
       data: top5TitleData.map(item => item.percentage),
     },
   ];
+
 
   return (
     <Chart

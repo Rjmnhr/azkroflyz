@@ -1,7 +1,9 @@
+import { terms_condition_path } from "../../config/config";
+
 const FooterComponent = () => {
   return (
     <footer className="footer bg-light">
-      <div className="container-fluid d-flex flex-md-row flex-column justify-content-between align-items-md-center gap-1 container-p-x py-3">
+      <div className="container-fluid d-flex flex-md-row flex-column justify-content-between align-items-md-center gap-1 container-p-x py-3 px-5" >
         <div>
           <a href="/" target="_blank" className="footer-text fw-bolder">
             Azkroflyz
@@ -15,7 +17,7 @@ const FooterComponent = () => {
           <a href="/void" className="footer-link me-4">
             Contact
           </a>
-          <a href="/void" className="footer-link">
+          <a href={terms_condition_path} className="footer-link">
             Terms &amp; Conditions
           </a>
         </div>

@@ -8,13 +8,27 @@ import ProtectedRoute from "./protected-route";
 import ForgotPassword from "../components/auth/forgot-password";
 import DashboardPage from "../pages/dashboard-page";
 import AccountPage from "../pages/account-page";
+import {
+  dashboard_path,
+  demo_video_path,
+  home_path,
+  login_app_path,
+  login_path,
+  privacy_policy_path,
+  registration_path,
+  reset_password_path,
+  terms_condition_path,
+  user_account_path,
+} from "../config/config";
+import TermsAndConditions from "../components/legal/terms-and-conditions";
+import PrivacyPolicy from "../components/legal/privacy-policy";
 
 const AppRoute: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path={home_path}
           element={
             <>
               <HomePage />
@@ -23,7 +37,7 @@ const AppRoute: React.FC = () => {
         />
 
         <Route
-          path="/tool"
+          path={dashboard_path}
           element={
             <ProtectedRoute
               element={
@@ -36,7 +50,7 @@ const AppRoute: React.FC = () => {
         />
 
         <Route
-          path="/account"
+          path={user_account_path}
           element={
             <>
               <AccountPage />
@@ -45,7 +59,7 @@ const AppRoute: React.FC = () => {
         />
 
         <Route
-          path="/login"
+          path={login_path}
           element={
             <>
               <LoginComponent />
@@ -54,7 +68,7 @@ const AppRoute: React.FC = () => {
         />
 
         <Route
-          path="/login-app"
+          path={login_app_path}
           element={
             <>
               <LoginComponent />
@@ -62,7 +76,7 @@ const AppRoute: React.FC = () => {
           }
         />
         <Route
-          path="/sign-up"
+          path={registration_path}
           element={
             <>
               <RegisterComponent />
@@ -70,14 +84,30 @@ const AppRoute: React.FC = () => {
           }
         />
         <Route
-          path="/forgot-password"
+          path={reset_password_path}
           element={
             <>
               <ForgotPassword />
             </>
           }
         />
-        <Route path="/demo" element={<DemoVideo />} />
+        <Route
+          path={terms_condition_path}
+          element={
+            <>
+              <TermsAndConditions />
+            </>
+          }
+        />
+        <Route
+          path={privacy_policy_path}
+          element={
+            <>
+              <PrivacyPolicy />
+            </>
+          }
+        />
+        <Route path={demo_video_path} element={<DemoVideo />} />
 
         <Route path="*" element={<PageNotFound />} />
       </Routes>

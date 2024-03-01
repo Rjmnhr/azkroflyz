@@ -5,8 +5,6 @@ import { Divider, Progress } from "antd";
 import WorldMapComponent from "../india-map";
 import ApexChart from "../charts/top-title-bar-chart";
 import ApexPieChart from "../charts/top-skills-pie-chart";
-import { LoadingOutlined } from "@ant-design/icons";
-import HeatmapChartDegreeVsTitle from "../charts/degree-vs-title-heatmap";
 import HeatmapChart from "../charts/sector-vs-employee-heatmap";
 import {
   LocationCount,
@@ -28,6 +26,7 @@ import {
 import { MasterDegreeOrganizationGraph } from "../charts/master-degree-flow-chart";
 import CommonJobs from "../../utils/dashboard-common-jobs";
 import ApexChartDummy from "../charts/profile-dummy-chart";
+import BarChartDegreeVsTitle from "../charts/degree-vs-title-heatmap";
 
 const OutputComponent = () => {
   const {
@@ -40,11 +39,13 @@ const OutputComponent = () => {
     ugDegreeAndDesiredMatch,
     ugDegreeAndUGTierMatch,
     desiredTitle,
+    careerTitle,
     isInputsEntered,
     desiredTitleMatch,
     byFactor,
     displayFactor,
     ugDegreeAndCompanyMatch,
+    setCareerTitle,
   } = useApplicationContext();
 
   //eslint-disable-next-line
@@ -114,7 +115,7 @@ const OutputComponent = () => {
           const response = await res.data;
 
           setEducationAndDesiredOutput(response);
-
+          setCareerTitle(desiredTitle);
           const percentageWithTitle =
             (response[0]?.totalCount / response[0]?.titleCount) * 100 || 0;
 
@@ -159,6 +160,7 @@ const OutputComponent = () => {
         })
         .catch((err) => console.log(err));
     }
+    //eslint-disable-next-line
   }, [educationOutput, storedDataString, byFactor, selectedCompanies]);
 
   useEffect(() => {
@@ -303,7 +305,14 @@ const OutputComponent = () => {
                             className="mt-3"
                           >
                             Loading..
-                            <LoadingOutlined />
+                            <div
+                              className="spinner-border spinner-border-md text-primary"
+                              role="status"
+                            >
+                              <span className="visually-hidden">
+                                Loading...
+                              </span>
+                            </div>
                           </div>
                         ) : (
                           <div
@@ -357,7 +366,14 @@ const OutputComponent = () => {
                             className="mt-3"
                           >
                             Loading..
-                            <LoadingOutlined />
+                            <div
+                              className="spinner-border spinner-border-md text-primary"
+                              role="status"
+                            >
+                              <span className="visually-hidden">
+                                Loading...
+                              </span>
+                            </div>
                           </div>
                         ) : (
                           <div
@@ -586,7 +602,14 @@ const OutputComponent = () => {
                               className="mt-3"
                             >
                               Loading..
-                              <LoadingOutlined />
+                              <div
+                                className="spinner-border spinner-border-md text-primary"
+                                role="status"
+                              >
+                                <span className="visually-hidden">
+                                  Loading...
+                                </span>
+                              </div>
                             </div>
                           ) : (
                             <div>
@@ -783,19 +806,41 @@ const OutputComponent = () => {
             <div className="">
               <div className="">
                 <div className="d-block justify-content-between flex-sm-row flex-column gap-3">
-                  <div className="card-title">
-                    <h2 className="text-nowrap mb-5 text-center ">
-                      Career Progression
-                    </h2>
-                  </div>
-
                   {isInputsEntered ? (
-                    <CommonJobs
-                      jobData={educationAndDesiredOutput}
-                      desiredTitle={desiredTitle}
-                    />
+                    <div>
+                      {isLoading ? (
+                        <div
+                          style={{
+                            height: "100px",
+                            display: "grid",
+                            placeItems: "center",
+                          }}
+                          className="mt-3"
+                        >
+                          Loading..
+                          <div
+                            className="spinner-border spinner-border-lg text-primary"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="card-title">
+                            <h2 className="text-nowrap mb-5 text-center ">
+                              Career Progression
+                            </h2>
+                          </div>
+                          <CommonJobs
+                            jobData={educationAndDesiredOutput}
+                            desiredTitle={careerTitle}
+                          />
+                        </div>
+                      )}
+                    </div>
                   ) : (
-                    ""
+                    " "
                   )}
                 </div>
               </div>
@@ -815,11 +860,32 @@ const OutputComponent = () => {
                   </div>
 
                   {isInputsEntered ? (
-                    <MasterDegreeOrganizationGraph
-                      degreeData={top5MasterDegrees}
-                    />
+                    <div>
+                      {isLoading ? (
+                        <div
+                          style={{
+                            height: "100px",
+                            display: "grid",
+                            placeItems: "center",
+                          }}
+                          className="mt-3"
+                        >
+                          Loading..
+                          <div
+                            className="spinner-border spinner-border-lg text-primary"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <MasterDegreeOrganizationGraph
+                          degreeData={top5MasterDegrees}
+                        />
+                      )}
+                    </div>
                   ) : (
-                    ""
+                    <p className=" py-2 px-3">No data</p>
                   )}
                 </div>
               </div>
@@ -845,27 +911,44 @@ const OutputComponent = () => {
                   <div className="card-body">
                     <div className=" justify-content-between align-items-center mb-3">
                       <div id="orderStatisticsChart">
-                        {isLoading ? (
-                          //
-                          ""
-                        ) : (
-                          <div className="w-100">
-                            <p className="text-start">Based on your profile</p>
-                            {educationOutput.length > 0 ? (
-                              <HeatmapChart data={educationOutput} />
+                        {isInputsEntered ? (
+                          <div>
+                            {isLoading ? (
+                              <div>
+                                Loading..
+                                <div
+                                  className="spinner-border spinner-border-lg text-primary"
+                                  role="status"
+                                >
+                                  <span className="visually-hidden">
+                                    Loading...
+                                  </span>
+                                </div>
+                              </div>
                             ) : (
-                              <div
-                                style={{
-                                  height: "100px",
-                                  display: "grid",
-                                  placeItems: "center",
-                                }}
-                              >
-                                {" "}
-                                <p>No data found</p>
+                              <div className="w-100">
+                                <p className="text-start">
+                                  Based on your profile
+                                </p>
+                                {educationOutput.length > 0 ? (
+                                  <HeatmapChart data={educationOutput} />
+                                ) : (
+                                  <div
+                                    style={{
+                                      height: "100px",
+                                      display: "grid",
+                                      placeItems: "center",
+                                    }}
+                                  >
+                                    {" "}
+                                    <p>No data found</p>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
+                        ) : (
+                          <p className=" py-2 px-3">No data</p>
                         )}
                       </div>
                     </div>
@@ -888,30 +971,36 @@ const OutputComponent = () => {
                   <div className="card-body">
                     <div className=" justify-content-between align-items-center mb-3">
                       <div id="orderStatisticsChart">
-                        {isLoading ? (
-                          ""
-                        ) : (
-                          <div className="w-100">
-                            <p className="text-start">
-                              Based on your profile and desired title
-                            </p>
-                            {educationOutput.length > 0 ? (
-                              <HeatmapChartDegreeVsTitle
-                                data={educationOutput}
-                              />
+                        {isInputsEntered ? (
+                          <div>
+                            {isLoading ? (
+                              ""
                             ) : (
-                              <div
-                                style={{
-                                  height: "100px",
-                                  display: "grid",
-                                  placeItems: "center",
-                                }}
-                              >
-                                {" "}
-                                <p>No data found</p>
+                              <div className="w-100">
+                                <p className="text-start">
+                                  Based on your profile and desired title
+                                </p>
+                                {educationOutput.length > 0 ? (
+                                  <BarChartDegreeVsTitle
+                                    data={educationOutput}
+                                  />
+                                ) : (
+                                  <div
+                                    style={{
+                                      height: "100px",
+                                      display: "grid",
+                                      placeItems: "center",
+                                    }}
+                                  >
+                                    {" "}
+                                    <p>No data found</p>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
+                        ) : (
+                          <p className=" py-2 px-3">No data</p>
                         )}
                       </div>
                     </div>

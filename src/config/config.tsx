@@ -1,0 +1,10 @@
+export const home_path = "/";
+export const login_path = "/login";
+export const login_app_path = "/login-app";
+export const registration_path = "/sign-up";
+export const reset_password_path = "/forgot-password";
+export const dashboard_path = "/tool";
+export const user_account_path = "/account";
+export const demo_video_path = "/demo";
+export const terms_condition_path = "/terms-and-conditions";
+export const privacy_policy_path = "/privacy-policy";

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import NavBar from "../layout/navbar";
+import { privacy_policy_path, terms_condition_path } from "../../config/config";
 
 const RegisterComponent = () => {
   const [email, setEmail] = useState<string>("");
@@ -72,14 +73,15 @@ const RegisterComponent = () => {
   }, [password, confirmPassword]);
   return (
     <>
-      <NavBar />
+      <NavBar background={"white"} />
       <div className="main-container" style={{ height: "100vh" }}>
         <div
           className="left-container img_container"
           style={{
-            backgroundImage: `url(https://res.cloudinary.com/dsw1ubwyh/image/upload/v1707721157/tzcqvmnmvqo6iijy3fs3.jpg)`,
+            backgroundImage: `url(https://res.cloudinary.com/dsw1ubwyh/image/upload/v1708604866/bkrjtlh8nakn4rdssnih.webp)`,
             backgroundPosition: "center",
-            backgroundSize: "cover",
+            backgroundSize: "contain",
+            backgroundRepeat:"no-repeat",
             height: "100vh",
             transform: "translate3d(0px, 0px, 0px)",
           }}
@@ -94,7 +96,7 @@ const RegisterComponent = () => {
                   style={{
                     display: "grid",
                     placeItems: "center",
-                    height: "100vh",
+              
                   }}
                 >
                   <div className="card col-12 col-lg-12">
@@ -207,11 +209,12 @@ const RegisterComponent = () => {
                               type="checkbox"
                               id="terms-conditions"
                               name="terms"
-                              style={{marginRight:"8px"}}
+                              style={{ marginRight: "8px" }}
                             />
                             <label className="form-check-label">
                               I agree to
-                              <a href="/">privacy policy & terms</a>
+                              <a href={privacy_policy_path}> privacy policy</a>
+                             {" "} and <a href={terms_condition_path}>conditions</a>
                             </label>
                           </div>
                         </div>
@@ -222,7 +225,8 @@ const RegisterComponent = () => {
 
                       <p className="text-center">
                         <span>Already have an account?</span>
-                        <a href="/login">{" "}
+                        <a href="/login">
+                          {" "}
                           <span>Sign in instead</span>
                         </a>
                       </p>

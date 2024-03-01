@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
-
-const NavBar = () => {
+import { home_path, login_path } from "../../config/config";
+interface NavBarProps {
+  background: string;
+}
+const NavBar: React.FC<NavBarProps> = ({ background }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -52,12 +55,12 @@ const NavBar = () => {
         id="header"
         className={`navbar fixed-top ${scrolled ? "scrolled" : ""}`}
         style={{
-          background: "white",
+          background: background,
           boxShadow: "0px 2px 15px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="container-fluid px-5  d-flex align-items-center">
-          <a href="/" className="d-flex">
+          <a href={home_path} className="d-flex">
             {" "}
             <img
               style={{ marginRight: "8px" }}
@@ -69,7 +72,7 @@ const NavBar = () => {
               width={50}
             />
             <div className="app-brand demo">
-              <a href="/" className="app-brand-link">
+              <a href={home_path} className="app-brand-link">
                 <span className="fs-2 demo menu-text fw-bolder ms-2">
                   Azkroflyz
                 </span>
@@ -94,7 +97,7 @@ const NavBar = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate(login_path)}
                   className="custom-demo-btn mt-3 m-3 "
                 >
                   Login

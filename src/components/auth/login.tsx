@@ -116,15 +116,16 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
   }, [isLoading]);
   return (
     <>
-      <NavBar />
+      <NavBar background={"white"} />
 
       <div className="main-container" style={{ height: "100vh" }}>
         <div
           className="left-container img_container"
           style={{
-            backgroundImage: `url(https://res.cloudinary.com/dsw1ubwyh/image/upload/v1707721157/tzcqvmnmvqo6iijy3fs3.jpg)`,
+            backgroundImage: `url(https://res.cloudinary.com/dsw1ubwyh/image/upload/v1708604866/bkrjtlh8nakn4rdssnih.webp)`,
             backgroundPosition: "center",
-            backgroundSize: "cover",
+            backgroundSize: "contain",
+            backgroundRepeat:"no-repeat",
             height: "100vh",
             transform: "translate3d(0px, 0px, 0px)",
           }}
@@ -139,7 +140,7 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                   style={{
                     display: "grid",
                     placeItems: "center",
-                    height: "100vh",
+          
                   }}
                 >
                   <div className="card col-12">

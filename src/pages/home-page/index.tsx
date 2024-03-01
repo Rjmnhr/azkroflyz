@@ -9,13 +9,14 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import NavBar from "../../components/layout/navbar";
 import { HomePageStyled } from "./style";
 import FooterComponent from "../../components/layout/footer";
+import { dashboard_path, demo_video_path } from "../../config/config";
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   return (
     <>
-      <NavBar />
+      <NavBar background={"white"} />
       <HomePageStyled>
         <div
           className="container-fluid pb-0 px-0 "
@@ -60,13 +61,13 @@ const HomePage = () => {
                       </h2>
                     </div>
                     <button
-                      onClick={() => navigate("/demo")}
+                      onClick={() => navigate(demo_video_path)}
                       className="custom-demo-btn mt-3 m-3 "
                     >
                       Watch Demo
                     </button>
                     <button
-                      onClick={() => navigate("/tool")}
+                      onClick={() => navigate(dashboard_path)}
                       className="custom-demo-btn m-3 "
                     >
                       <div className="d-flex justify-content-center align-items-start">

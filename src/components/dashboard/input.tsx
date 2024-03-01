@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { Radio, RadioChangeEvent, Select } from "antd";
 import AxiosInstance from "../../config/axios";
 
@@ -37,7 +37,13 @@ interface JobTitleOptions {
 
 const collegeTierOptions = ["1", "2", "3", "4"];
 
-const InputComponent: React.FC = () => {
+interface InputComponentProps {
+  setIsResultsOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const InputComponent: React.FC<InputComponentProps> = ({
+  setIsResultsOpen,
+}) => {
   const [UGDegree, setUGDegree] = useState<string>("");
 
   const [selectedUgCollege, setSelectedUgCollege] = useState<string>("");
@@ -82,6 +88,7 @@ const InputComponent: React.FC = () => {
     setUgDegreeAndDesiredMatch,
     setUgDegreeAndCompanyMatch,
     setDesiredTitle,
+
     setIsInputsEntered,
     setDesiredTitleMatch,
     setSelectedCompanies,
@@ -89,13 +96,12 @@ const InputComponent: React.FC = () => {
     setByFactor,
     setDisplayFactor,
     byFactor,
-
     desiredTitle,
     desiredTitleMatch,
   } = useApplicationContext();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
+  const [byFactorValue, setByFactorValue] = useState<string>("title");
   useEffect(() => {
     // Check if the screen width is less than a certain value (e.g., 768px) to determine if it's a mobile device
     const handleResize = () => {
@@ -146,6 +152,8 @@ const InputComponent: React.FC = () => {
   // ]);
   const handleOnChangeFetch = () => {
     setIsInputsEntered(true);
+    setIsResultsOpen(true);
+    setByFactor(byFactorValue);
     handleFormSubmit();
     const formData = new FormData();
     formData.append("desired_title", desiredTitle);
@@ -154,7 +162,7 @@ const InputComponent: React.FC = () => {
     formData.append("company_size", selectedCompanySize);
     formData.append("company_sector", selectedCompanySector);
     formData.append("companies", JSON.stringify(selectedCompanies));
-    formData.append("byFactor", byFactor);
+    formData.append("byFactor", byFactorValue);
     AxiosInstance.post("api/linkedin/data", formData, {
       headers: {
         "Content-Type": "application/json",
@@ -299,7 +307,7 @@ const InputComponent: React.FC = () => {
     //eslint-disable-next-line
   }, [selectedCompanies]);
   const handleRadioChange = (e: RadioChangeEvent) => {
-    setByFactor(e.target.value);
+    setByFactorValue(e.target.value);
   };
   return (
     <div>
@@ -314,7 +322,9 @@ const InputComponent: React.FC = () => {
         >
           <div className="text-start  col-10  mt-3 p-3">
             <div className=" form-group mb-3">
-              <label className="mb-3">Under Graduate Degree</label>
+              <label className="mb-3">
+                Under Graduate Degree<span style={{ color: "red" }}>*</span>
+              </label>
               <Select
                 className="rounded-0"
                 value={UGDegree}
@@ -333,7 +343,10 @@ const InputComponent: React.FC = () => {
             </div>
 
             <div className=" form-group mb-3">
-              <label className="mb-3"> Under Graduate College</label>
+              <label className="mb-3">
+                {" "}
+                Under Graduate College<span style={{ color: "red" }}>*</span>
+              </label>
               <Select
                 disabled={UGDegree ? false : true}
                 value={selectedUgCollege}
@@ -406,7 +419,10 @@ const InputComponent: React.FC = () => {
             )}
 
             <div className=" form-group mb-3">
-              <label className="mb-3"> Desired Title </label>
+              <label className="mb-3">
+                {" "}
+                Desired Title<span style={{ color: "red" }}>*</span>{" "}
+              </label>
               <Select
                 value={desiredTitle}
                 onChange={(value) => setDesiredTitle(value)}
@@ -478,7 +494,7 @@ const InputComponent: React.FC = () => {
             <p>Show the results based on</p>
             <Radio.Group
               onChange={(e) => handleRadioChange(e)}
-              value={byFactor}
+              value={byFactorValue}
             >
               <Radio value="title">Title</Radio>
               <Radio
@@ -499,8 +515,9 @@ const InputComponent: React.FC = () => {
               <button
                 onClick={handleOnChangeFetch}
                 className="btn btn-primary w-100 mt-5"
+                disabled={desiredTitle && UGDegree && UGTier ? false : true}
               >
-               Submit
+                Submit
               </button>
             )}
           </div>

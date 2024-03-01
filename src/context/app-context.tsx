@@ -28,6 +28,8 @@ interface AppContextProps {
   setUgDegreeAndCompanyMatch: Dispatch<SetStateAction<number>>;
   desiredTitle: string;
   setDesiredTitle: Dispatch<SetStateAction<string>>;
+  careerTitle: string;
+  setCareerTitle: Dispatch<SetStateAction<string>>;
   desiredTitleMatch: number;
   setDesiredTitleMatch: Dispatch<SetStateAction<number>>;
   isInputsEntered: boolean;
@@ -76,6 +78,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   const [ugDegreeAndCompanyMatch, setUgDegreeAndCompanyMatch] =
     useState<number>(0);
   const [desiredTitle, setDesiredTitle] = useState<string>("");
+  const [careerTitle, setCareerTitle] = useState<string>("");
   const [desiredTitleMatch, setDesiredTitleMatch] = useState<number>(0);
   const [isInputsEntered, setIsInputsEntered] = useState<boolean>(false);
   const [selectedCompanySizePrevMatch, setSelectedCompanySizePrevMatch] =
@@ -112,6 +115,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     setUgDegreeAndDesiredMatch,
     desiredTitle,
     setDesiredTitle,
+    careerTitle,
+    setCareerTitle,
     isInputsEntered,
     setIsInputsEntered,
     desiredTitleMatch,

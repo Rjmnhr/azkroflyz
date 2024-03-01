@@ -48,6 +48,7 @@ const HeatmapChartDegreeVsTitle = ({ data }) => {
     }
   });
 
+
   // Creating the heatmap trace
   const heatmapTrace = {
     x: uniqueTitles,
